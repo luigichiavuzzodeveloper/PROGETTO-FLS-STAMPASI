@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Assistente virtuale per la gestione delle informazioni scolastiche - Mitigazione del sovraccarico informativo">
+    <meta name="theme-color" content="#1a3a5c">
+    
+    <title>EduBot | Assistente Scolastico</title>
+    
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Supporto riduzione movimento -->
+    <style>
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        
+        <!-- Sidebar sinistra - Info utente e contesto -->
+        <aside class="chat-sidebar" aria-label="Informazioni contestuali">
+            <div class="sidebar-header">
+                <div class="school-logo">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M12 3L1 9L5 11.18V17.18L12 21L19 17.18V11.18L23 9L12 3Z" fill="currentColor" opacity="0.9"/>
+                        <path d="M12 12L19 8.5V15.5L12 19L5 15.5V8.5L12 12Z" fill="currentColor" opacity="0.6"/>
+                    </svg>
+                    <span>Istituto Scolastico</span>
+                </div>
+            </div>
+            
+            <div class="sidebar-content">
+                <!-- Profilo utente -->
+                <div class="user-context">
+                    <div class="user-avatar" aria-hidden="true">MR</div>
+                    <div class="user-info">
+                        <h2 class="user-name">Mario Rossi</h2>
+                        <span class="user-role">Docente - 3B</span>
+                    </div>
+                </div>
+                
+                <!-- Riepilogo rapido -->
+                <div class="quick-summary">
+                    <h3 class="summary-title">Riepilogo oggi</h3>
+                    <div class="summary-stats">
+                        <div class="stat-item">
+                            <span class="stat-icon">📋</span>
+                            <span class="stat-value">3</span>
+                            <span class="stat-label">Circolari</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">📅</span>
+                            <span class="stat-value">2</span>
+                            <span class="stat-label">Eventi</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">⏰</span>
+                            <span class="stat-value">1</span>
+                            <span class="stat-label">Scadenza</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Suggerimenti rapidi -->
+                <div class="quick-prompts">
+                    <h3 class="prompts-title">Cosa posso chiedere?</h3>
+                    <div class="prompt-chips">
+                        <button class="prompt-chip" data-prompt="circolari recenti">📄 Circolari recenti</button>
+                        <button class="prompt-chip" data-prompt="scadenze">⏰ Cosa scade questa settimana?</button>
+                        <button class="prompt-chip" data-prompt="orario domani">📚 Orario di domani</button>
+                        <button class="prompt-chip" data-prompt="eventi">📅 Prossimi eventi</button>
+                        <button class="prompt-chip" data-prompt="contatti docenti">👥 Contatti docenti</button>
+                        <button class="prompt-chip" data-prompt="moduli da firmare">✍️ Moduli da firmare</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <button class="emergency-btn" id="emergency-trigger" aria-label="Emergenza">
+                    <span>🚨</span>
+                    <span>Emergenza</span>
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Area principale chat -->
+        <main class="chat-main">
+            <!-- Header chat -->
+            <header class="chat-header">
+                <div class="bot-info">
+                    <div class="bot-avatar">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.2"/>
+                            <circle cx="12" cy="12" r="6" fill="currentColor"/>
+                            <circle cx="9" cy="10" r="1.5" fill="white"/>
+                            <circle cx="15" cy="10" r="1.5" fill="white"/>
+                            <path d="M9 14C9.5 15 11 16 12 16C13 16 14.5 15 15 14" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="bot-name">EduBot</h1>
+                        <span class="bot-status">
+                            <span class="status-dot online"></span>
+                            Online • Pronto ad aiutarti
+                        </span>
+                    </div>
+                </div>
+                <div class="chat-actions">
+                    <button class="action-btn" aria-label="Cerca nella conversazione" title="Cerca">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+                            <path d="M16 16L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                    <button class="action-btn" aria-label="Nuova conversazione" title="Nuova chat">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                    <button class="action-btn" aria-label="Impostazioni" title="Impostazioni">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="3" fill="currentColor"/>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+            
+            <!-- Area messaggi -->
+            <div class="chat-messages" id="chat-messages" role="log" aria-live="polite" aria-label="Conversazione">
+                
+                <!-- Messaggio di benvenuto dal bot -->
+                <div class="message message-bot">
+                    <div class="message-avatar" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="12" cy="12" r="10"/>
+                            <circle cx="9" cy="10" r="1.5" fill="white"/>
+                            <circle cx="15" cy="10" r="1.5" fill="white"/>
+                            <path d="M9 14C9.5 15 11 16 12 16C13 16 14.5 15 15 14" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            <p>Ciao Mario! 👋 Sono EduBot, il tuo assistente scolastico.</p>
+                            <p>Sono qui per aiutarti a gestire circolari, scadenze, eventi e molto altro. Ti basta chiedermi ciò che ti serve!</p>
+                        </div>
+                        <div class="message-suggestions">
+                            <p class="suggestion-label">Ecco alcune cose che puoi chiedermi:</p>
+                            <div class="suggestion-chips">
+                                <button class="suggestion-chip">📋 Mostrami le circolari recenti</button>
+                                <button class="suggestion-chip">⏰ Cosa scade questa settimana?</button>
+                                <button class="suggestion-chip">📚 Qual è l'orario di domani?</button>
+                                <button class="suggestion-chip">📅 Eventi in programma</button>
+                            </div>
+                        </div>
+                        <span class="message-time">10:30</span>
+                    </div>
+                </div>
+                
+                <!-- Messaggio utente (esempio) -->
+                <div class="message message-user">
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            <p>Quali sono le circolari più recenti?</p>
+                        </div>
+                        <span class="message-time">10:31</span>
+                    </div>
+                </div>
+                
+                <!-- Risposta bot con lista circolari -->
+                <div class="message message-bot">
+                    <div class="message-avatar" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="12" cy="12" r="10"/>
+                            <circle cx="9" cy="10" r="1.5" fill="white"/>
+                            <circle cx="15" cy="10" r="1.5" fill="white"/>
+                            <path d="M9 14C9.5 15 11 16 12 16C13 16 14.5 15 15 14" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            <p>Ecco le ultime 3 circolari che ti riguardano:</p>
+                        </div>
+                        
+                        <!-- Card circolari -->
+                        <div class="circolari-cards">
+                            <div class="circolare-card priority-urgent" tabindex="0" role="article">
+                                <div class="card-header">
+                                    <span class="priority-tag urgent">🔴 Urgente</span>
+                                    <span class="card-date">20/04/2026</span>
+                                </div>
+                                <h4 class="card-title">Sospensione attività didattiche - Allerta meteo</h4>
+                                <p class="card-excerpt">A causa dell'allerta meteo arancione, le attività didattiche sono sospese per la giornata di domani 21/04/2026.</p>
+                                <div class="card-actions">
+                                    <button class="card-btn">📎 Allegato PDF</button>
+                                    <button class="card-btn">📖 Leggi tutto</button>
+                                </div>
+                            </div>
+                            
+                            <div class="circolare-card" tabindex="0" role="article">
+                                <div class="card-header">
+                                    <span class="priority-tag important">🟡 Importante</span>
+                                    <span class="card-date">19/04/2026</span>
+                                </div>
+                                <h4 class="card-title">Calendario scrutini secondo quadrimestre</h4>
+                                <p class="card-excerpt">Pubblicato il calendario degli scrutini per tutte le classi. Si prega di prenderne visione.</p>
+                                <div class="card-actions">
+                                    <button class="card-btn">📎 Allegato PDF</button>
+                                    <button class="card-btn">📖 Leggi tutto</button>
+                                </div>
+                            </div>
+                            
+                            <div class="circolare-card" tabindex="0" role="article">
+                                <div class="card-header">
+                                    <span class="priority-tag normal">🔵 Ordinaria</span>
+                                    <span class="card-date">18/04/2026</span>
+                                </div>
+                                <h4 class="card-title">Contributo volontario a.s. 2025/2026</h4>
+                                <p class="card-excerpt">Disponibile il modulo per il versamento del contributo volontario annuale.</p>
+                                <div class="card-actions">
+                                    <button class="card-btn">📎 Modulo</button>
+                                    <button class="card-btn">📖 Leggi tutto</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="message-bubble message-followup">
+                            <p>Vuoi vedere altre circolari o filtrarle per categoria?</p>
+                        </div>
+                        <span class="message-time">10:31</span>
+                    </div>
+                </div>
+                
+                <!-- Indicatore di scrittura (nascosto di default) -->
+                <div class="message message-bot typing-indicator" id="typing-indicator" hidden>
+                    <div class="message-avatar" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="12" cy="12" r="10"/>
+                            <circle cx="9" cy="10" r="1.5" fill="white"/>
+                            <circle cx="15" cy="10" r="1.5" fill="white"/>
+                            <path d="M9 14C9.5 15 11 16 12 16C13 16 14.5 15 15 14" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="message-content">
+                        <div class="message-bubble typing-bubble">
+                            <span class="typing-dot"></span>
+                            <span class="typing-dot"></span>
+                            <span class="typing-dot"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Area input -->
+            <footer class="chat-input-area">
+                <div class="input-container">
+                    <button class="input-action" aria-label="Allega file" title="Allega">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                    
+                    <div class="message-input-wrapper">
+                        <label for="message-input" class="sr-only">Scrivi un messaggio</label>
+                        <textarea 
+                            id="message-input" 
+                            class="message-input" 
+                            placeholder="Scrivi un messaggio..." 
+                            rows="1"
+                            aria-label="Scrivi un messaggio"
+                        ></textarea>
+                    </div>
+                    
+                    <button class="input-action" aria-label="Invia messaggio" title="Invia" id="send-button">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                            <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <p class="input-disclaimer">
+                    EduBot può commettere errori. Verifica sempre le informazioni importanti.
+                </p>
+            </footer>
+        </main>
+        
+        <!-- Overlay emergenza (nascosto di default) -->
+        <div id="emergency-overlay" class="emergency-overlay" role="alert" aria-live="assertive" hidden>
+            <div class="emergency-modal">
+                <div class="emergency-icon">🚨</div>
+                <h2 class="emergency-title">MODALITÀ EMERGENZA</h2>
+                <p class="emergency-message" id="emergency-message-text">
+                    Descrivi brevemente la situazione di emergenza. Un operatore ti risponderà immediatamente.
+                </p>
+                <div class="emergency-input-group">
+                    <textarea 
+                        id="emergency-input" 
+                        class="emergency-input" 
+                        placeholder="Descrivi l'emergenza..."
+                        rows="3"
+                        aria-label="Descrizione emergenza"
+                    ></textarea>
+                </div>
+                <div class="emergency-actions">
+                    <button class="emergency-btn-send" id="emergency-send">
+                        <span>🆘</span> Invia richiesta emergenza
+                    </button>
+                    <button class="emergency-btn-cancel" id="emergency-cancel">
+                        Annulla
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Script -->
+    <script>
+        // Auto-resize textarea
+        const textarea = document.getElementById('message-input');
+        if (textarea) {
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+            });
+        }
+        
+        // Gestione overlay emergenza
+        const emergencyTrigger = document.getElementById('emergency-trigger');
+        const emergencyOverlay = document.getElementById('emergency-overlay');
+        const emergencyCancel = document.getElementById('emergency-cancel');
+        
+        if (emergencyTrigger && emergencyOverlay) {
+            emergencyTrigger.addEventListener('click', () => {
+                emergencyOverlay.hidden = false;
+            });
+        }
+        
+        if (emergencyCancel && emergencyOverlay) {
+            emergencyCancel.addEventListener('click', () => {
+                emergencyOverlay.hidden = true;
+            });
+        }
+        
+        // Click su prompt rapidi
+        document.querySelectorAll('.prompt-chip, .suggestion-chip').forEach(chip => {
+            chip.addEventListener('click', function() {
+                const prompt = this.getAttribute('data-prompt') || this.textContent.trim();
+                const input = document.getElementById('message-input');
+                if (input) {
+                    input.value = prompt;
+                    input.style.height = 'auto';
+                    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+                    input.focus();
+                }
+            });
+        });
+        
+        // Focus trap per accessibilità (semplificato)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && emergencyOverlay && !emergencyOverlay.hidden) {
+                emergencyOverlay.hidden = true;
+            }
+        });
+    </script>
+</body>
+</html>
