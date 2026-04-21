@@ -143,7 +143,7 @@
             <!-- Area messaggi -->
             <div class="chat-messages" id="chat-messages" role="log" aria-live="polite" aria-label="Conversazione">
                 
-                <!-- Messaggio di benvenuto dal bot -->
+                <!-- Solo messaggio di benvenuto iniziale -->
                 <div class="message message-bot">
                     <div class="message-avatar" aria-hidden="true">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -156,95 +156,12 @@
                     <div class="message-content">
                         <div class="message-bubble">
                             <p>Ciao Mario! 👋 Sono EduBot, il tuo assistente scolastico.</p>
-                            <p>Sono qui per aiutarti a gestire circolari, scadenze, eventi e molto altro. Ti basta chiedermi ciò che ti serve!</p>
-                        </div>
-                        <div class="message-suggestions">
-                            <p class="suggestion-label">Ecco alcune cose che puoi chiedermi:</p>
-                            <div class="suggestion-chips">
-                                <button class="suggestion-chip">📋 Mostrami le circolari recenti</button>
-                                <button class="suggestion-chip">⏰ Cosa scade questa settimana?</button>
-                                <button class="suggestion-chip">📚 Qual è l'orario di domani?</button>
-                                <button class="suggestion-chip">📅 Eventi in programma</button>
-                            </div>
+                            <p>Chiedimi pure quello che ti serve: circolari, scadenze, orari, eventi e molto altro.</p>
                         </div>
                         <span class="message-time">10:30</span>
                     </div>
                 </div>
-                
-                <!-- Messaggio utente (esempio) -->
-                <div class="message message-user">
-                    <div class="message-content">
-                        <div class="message-bubble">
-                            <p>Quali sono le circolari più recenti?</p>
-                        </div>
-                        <span class="message-time">10:31</span>
-                    </div>
-                </div>
-                
-                <!-- Risposta bot con lista circolari -->
-                <div class="message message-bot">
-                    <div class="message-avatar" aria-hidden="true">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                            <circle cx="12" cy="12" r="10"/>
-                            <circle cx="9" cy="10" r="1.5" fill="white"/>
-                            <circle cx="15" cy="10" r="1.5" fill="white"/>
-                            <path d="M9 14C9.5 15 11 16 12 16C13 16 14.5 15 15 14" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-                        </svg>
-                    </div>
-                    <div class="message-content">
-                        <div class="message-bubble">
-                            <p>Ecco le ultime 3 circolari che ti riguardano:</p>
-                        </div>
-                        
-                        <!-- Card circolari -->
-                        <div class="circolari-cards">
-                            <div class="circolare-card priority-urgent" tabindex="0" role="article">
-                                <div class="card-header">
-                                    <span class="priority-tag urgent">🔴 Urgente</span>
-                                    <span class="card-date">20/04/2026</span>
-                                </div>
-                                <h4 class="card-title">Sospensione attività didattiche - Allerta meteo</h4>
-                                <p class="card-excerpt">A causa dell'allerta meteo arancione, le attività didattiche sono sospese per la giornata di domani 21/04/2026.</p>
-                                <div class="card-actions">
-                                    <button class="card-btn">📎 Allegato PDF</button>
-                                    <button class="card-btn">📖 Leggi tutto</button>
-                                </div>
-                            </div>
-                            
-                            <div class="circolare-card" tabindex="0" role="article">
-                                <div class="card-header">
-                                    <span class="priority-tag important">🟡 Importante</span>
-                                    <span class="card-date">19/04/2026</span>
-                                </div>
-                                <h4 class="card-title">Calendario scrutini secondo quadrimestre</h4>
-                                <p class="card-excerpt">Pubblicato il calendario degli scrutini per tutte le classi. Si prega di prenderne visione.</p>
-                                <div class="card-actions">
-                                    <button class="card-btn">📎 Allegato PDF</button>
-                                    <button class="card-btn">📖 Leggi tutto</button>
-                                </div>
-                            </div>
-                            
-                            <div class="circolare-card" tabindex="0" role="article">
-                                <div class="card-header">
-                                    <span class="priority-tag normal">🔵 Ordinaria</span>
-                                    <span class="card-date">18/04/2026</span>
-                                </div>
-                                <h4 class="card-title">Contributo volontario a.s. 2025/2026</h4>
-                                <p class="card-excerpt">Disponibile il modulo per il versamento del contributo volontario annuale.</p>
-                                <div class="card-actions">
-                                    <button class="card-btn">📎 Modulo</button>
-                                    <button class="card-btn">📖 Leggi tutto</button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="message-bubble message-followup">
-                            <p>Vuoi vedere altre circolari o filtrarle per categoria?</p>
-                        </div>
-                        <span class="message-time">10:31</span>
-                    </div>
-                </div>
-                
+
                 <!-- Indicatore di scrittura (nascosto di default) -->
                 <div class="message message-bot typing-indicator" id="typing-indicator" hidden>
                     <div class="message-avatar" aria-hidden="true">
@@ -263,6 +180,7 @@
                         </div>
                     </div>
                 </div>
+                
             </div>
             
             <!-- Area input -->
