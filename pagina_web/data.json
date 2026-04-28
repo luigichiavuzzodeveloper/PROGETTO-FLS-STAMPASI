@@ -1,0 +1,212 @@
+{
+  "utente": {
+    "id": "usr-001",
+    "nome": "Mario",
+    "cognome": "Rossi",
+    "ruolo": "docente",
+    "classe": "3B",
+    "email": "mario.rossi@istituto.edu",
+    "preferiti": ["circ-001", "circ-003"]
+  },
+  
+  "circolari": [
+    {
+      "id": "circ-001",
+      "titolo": "Sospensione attività didattiche - Allerta meteo",
+      "corpo": "A causa dell'allerta meteo arancione diramata dalla Protezione Civile, tutte le attività didattiche sono sospese per la giornata di domani 21/04/2026. Il personale ATA è tenuto a presentarsi regolarmente. Si raccomanda di monitorare il sito per ulteriori aggiornamenti.",
+      "categoria": "emergenza",
+      "priorita": "urgente",
+      "data_pubblicazione": "2026-04-20",
+      "scadenza": "2026-04-22",
+      "destinatari": ["tutti"],
+      "allegati": [
+        {"nome": "Circolare_n45.pdf", "tipo": "pdf", "url": "/allegati/circ45.pdf"}
+      ],
+      "letta": false
+    },
+    {
+      "id": "circ-002",
+      "titolo": "Calendario scrutini secondo quadrimestre",
+      "corpo": "Si comunica il calendario degli scrutini del secondo quadrimestre per l'a.s. 2025/2026. I consigli di classe si riuniranno secondo il prospetto allegato. Si ricorda di inserire tutti i voti entro 48 ore prima dello scrutinio.",
+      "categoria": "didattica",
+      "priorita": "importante",
+      "data_pubblicazione": "2026-04-19",
+      "scadenza": "2026-05-10",
+      "destinatari": ["docenti"],
+      "allegati": [
+        {"nome": "Calendario_scrutini.pdf", "tipo": "pdf", "url": "/allegati/scrutini.pdf"}
+      ],
+      "letta": true
+    },
+    {
+      "id": "circ-003",
+      "titolo": "Contributo volontario a.s. 2025/2026",
+      "corpo": "Si informano le famiglie che è disponibile il modulo per il versamento del contributo volontario annuale. Il contributo è fondamentale per l'ampliamento dell'offerta formativa. La scadenza è fissata al 30/05/2026.",
+      "categoria": "amministrazione",
+      "priorita": "normale",
+      "data_pubblicazione": "2026-04-18",
+      "scadenza": "2026-05-30",
+      "destinatari": ["genitori"],
+      "allegati": [
+        {"nome": "Modulo_contributo.pdf", "tipo": "pdf", "url": "/allegati/contributo.pdf"}
+      ],
+      "letta": false
+    },
+    {
+      "id": "circ-004",
+      "titolo": "Uscita didattica Museo Scienze Naturali",
+      "corpo": "Le classi 3A e 3B parteciperanno all'uscita didattica presso il Museo di Scienze Naturali il giorno 10/05/2026. Costo: 15€ a studente. Autorizzazione da firmare entro il 05/05/2026.",
+      "categoria": "didattica",
+      "priorita": "importante",
+      "data_pubblicazione": "2026-04-15",
+      "scadenza": "2026-05-05",
+      "destinatari": ["studenti", "genitori", "docenti"],
+      "allegati": [
+        {"nome": "Autorizzazione_uscita.pdf", "tipo": "pdf", "url": "/allegati/autorizzazione.pdf"},
+        {"nome": "Programma_museo.pdf", "tipo": "pdf", "url": "/allegati/programma.pdf"}
+      ],
+      "letta": false
+    }
+  ],
+  
+  "eventi": [
+    {
+      "id": "evt-001",
+      "titolo": "Collegio Docenti straordinario",
+      "data": "2026-04-20",
+      "ora_inizio": "16:30",
+      "ora_fine": "18:30",
+      "luogo": "Aula Magna",
+      "categoria": "riunione",
+      "destinatari": ["docenti"]
+    },
+    {
+      "id": "evt-002",
+      "titolo": "Consiglio di classe 3B",
+      "data": "2026-04-22",
+      "ora_inizio": "15:00",
+      "ora_fine": "16:30",
+      "luogo": "Sala Riunioni",
+      "categoria": "riunione",
+      "destinatari": ["docenti"]
+    },
+    {
+      "id": "evt-003",
+      "titolo": "Festa della Liberazione",
+      "data": "2026-04-25",
+      "ora_inizio": "00:00",
+      "ora_fine": "23:59",
+      "luogo": "Festività nazionale",
+      "categoria": "festività",
+      "destinatari": ["tutti"]
+    },
+    {
+      "id": "evt-004",
+      "titolo": "Incontro genitori 3B",
+      "data": "2026-05-02",
+      "ora_inizio": "17:00",
+      "ora_fine": "19:00",
+      "luogo": "Aula 3B",
+      "categoria": "incontro",
+      "destinatari": ["docenti", "genitori"]
+    }
+  ],
+  
+  "orario": {
+    "3B": {
+      "lunedì": [
+        {"ora": "08:00-09:00", "materia": "Matematica", "docente": "Prof. Rossi"},
+        {"ora": "09:00-10:00", "materia": "Italiano", "docente": "Prof.ssa Bianchi"},
+        {"ora": "10:00-11:00", "materia": "Scienze", "docente": "Prof.ssa Verdi"},
+        {"ora": "11:15-12:15", "materia": "Inglese", "docente": "Prof.ssa Neri"},
+        {"ora": "12:15-13:15", "materia": "Storia", "docente": "Prof. Rossi"}
+      ],
+      "martedì": [
+        {"ora": "08:00-09:00", "materia": "Italiano", "docente": "Prof.ssa Bianchi"},
+        {"ora": "09:00-10:00", "materia": "Matematica", "docente": "Prof. Rossi"},
+        {"ora": "10:00-11:00", "materia": "Ed. Fisica", "docente": "Prof. Gialli"},
+        {"ora": "11:15-12:15", "materia": "Arte", "docente": "Prof.ssa Blu"},
+        {"ora": "12:15-13:15", "materia": "Musica", "docente": "Prof. Viola"}
+      ]
+    }
+  },
+  
+  "contatti": [
+    {
+      "id": "cnt-001",
+      "nome": "Prof. Mario Rossi",
+      "materia": "Matematica e Storia",
+      "email": "mario.rossi@istituto.edu",
+      "ricevimento": "Mercoledì 11:00-12:00",
+      "classe": "3B"
+    },
+    {
+      "id": "cnt-002",
+      "nome": "Prof.ssa Laura Bianchi",
+      "materia": "Italiano",
+      "email": "laura.bianchi@istituto.edu",
+      "ricevimento": "Lunedì 14:00-15:00",
+      "classe": "3B"
+    },
+    {
+      "id": "cnt-003",
+      "nome": "Prof.ssa Elena Verdi",
+      "materia": "Scienze",
+      "email": "elena.verdi@istituto.edu",
+      "ricevimento": "Giovedì 10:00-11:00",
+      "classe": "3B"
+    },
+    {
+      "id": "cnt-004",
+      "nome": "Segreteria Didattica",
+      "materia": null,
+      "email": "segreteria@istituto.edu",
+      "ricevimento": "Lun-Ven 10:00-13:00",
+      "classe": null
+    }
+  ],
+  
+  "moduli": [
+    {
+      "id": "mod-001",
+      "titolo": "Autorizzazione uscita didattica Museo Scienze",
+      "descrizione": "Modulo di autorizzazione per l'uscita didattica al Museo di Scienze Naturali del 10/05/2026",
+      "campi": [
+        {"nome": "nome_studente", "tipo": "testo", "obbligatorio": true},
+        {"nome": "classe", "tipo": "testo", "obbligatorio": true},
+        {"nome": "firma_genitore", "tipo": "testo", "obbligatorio": true}
+      ],
+      "scadenza": "2026-05-05",
+      "stato": "da_firmare"
+    },
+    {
+      "id": "mod-002",
+      "titolo": "Patto di corresponsabilità",
+      "descrizione": "Patto educativo di corresponsabilità scuola-famiglia a.s. 2025/2026",
+      "campi": [
+        {"nome": "nome_genitore", "tipo": "testo", "obbligatorio": true},
+        {"nome": "firma", "tipo": "testo", "obbligatorio": true}
+      ],
+      "scadenza": "2026-04-30",
+      "stato": "da_firmare"
+    }
+  ],
+  
+  "risposte_predefinite": {
+    "saluto": [
+      "Ciao! Come posso aiutarti?",
+      "Eccomi! Cosa ti serve sapere?",
+      "Sono qui per te. Dimmi pure!"
+    ],
+    "errore": [
+      "Scusa, non ho capito. Puoi riformulare la domanda?",
+      "Non sono sicuro di aver capito. Prova a chiedermi in modo diverso.",
+      "Puoi essere più specifico? Ad esempio: 'mostrami le circolari' o 'eventi di oggi'"
+    ],
+    "fallback": [
+      "Forse cercavi una di queste cose:",
+      "Ecco cosa posso fare per te:",
+      "Ti suggerisco di provare con:"
+    ]
+  }
+}
