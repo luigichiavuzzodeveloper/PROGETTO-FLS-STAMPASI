@@ -8,7 +8,6 @@
     "email": "mario.rossi@istituto.edu",
     "preferiti": ["circ-001", "circ-003"]
   },
-  
   "circolari": [
     {
       "id": "circ-001",
@@ -68,7 +67,6 @@
       "letta": false
     }
   ],
-  
   "eventi": [
     {
       "id": "evt-001",
@@ -111,7 +109,6 @@
       "destinatari": ["docenti", "genitori"]
     }
   ],
-  
   "orario": {
     "3B": {
       "lunedì": [
@@ -130,7 +127,6 @@
       ]
     }
   },
-  
   "contatti": [
     {
       "id": "cnt-001",
@@ -165,7 +161,6 @@
       "classe": null
     }
   ],
-  
   "moduli": [
     {
       "id": "mod-001",
@@ -191,7 +186,6 @@
       "stato": "da_firmare"
     }
   ],
-  
   "risposte_predefinite": {
     "saluto": [
       "Ciao! Come posso aiutarti?",

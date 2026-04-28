@@ -28,6 +28,10 @@
         }
     </style>
 </head>
+    <!-- Script principale -->
+    <script src="app.js" defer></script>
+</body>
+</html>
 <body>
     <div class="app-container">
         
@@ -215,37 +219,17 @@
                 </p>
             </footer>
         </main>
-        
-        <!-- Overlay emergenza (nascosto di default) -->
-        <div id="emergency-overlay" class="emergency-overlay" role="alert" aria-live="assertive" hidden>
-            <div class="emergency-modal">
-                <div class="emergency-icon">🚨</div>
-                <h2 class="emergency-title">MODALITÀ EMERGENZA</h2>
-                <p class="emergency-message" id="emergency-message-text">
-                    Descrivi brevemente la situazione di emergenza. Un operatore ti risponderà immediatamente.
-                </p>
-                <div class="emergency-input-group">
-                    <textarea 
-                        id="emergency-input" 
-                        class="emergency-input" 
-                        placeholder="Descrivi l'emergenza..."
-                        rows="3"
-                        aria-label="Descrizione emergenza"
-                    ></textarea>
-                </div>
-                <div class="emergency-actions">
-                    <button class="emergency-btn-send" id="emergency-send">
-                        <span>🆘</span> Invia richiesta emergenza
-                    </button>
-                    <button class="emergency-btn-cancel" id="emergency-cancel">
-                        Annulla
-                    </button>
-                </div>
-            </div>
+
+            <!-- Overlay emergenza -->
+        <div id="emergency-overlay" ...>
+            ...
         </div>
     </div>
     
-    <!-- Script -->
+    <!-- Script principale -->
+    <script src="app.js" defer></script>
+    
+    <!-- Script inline per funzioni base -->
     <script>
         // Auto-resize textarea
         const textarea = document.getElementById('message-input');
@@ -287,7 +271,7 @@
             });
         });
         
-        // Focus trap per accessibilità (semplificato)
+        // Focus trap per accessibilità
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && emergencyOverlay && !emergencyOverlay.hidden) {
                 emergencyOverlay.hidden = true;
