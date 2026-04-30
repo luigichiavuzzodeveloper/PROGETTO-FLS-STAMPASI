@@ -1,6 +1,6 @@
-/**
+       /**
  * ============================================================================
- * EduBot - Assistente Scolastico Centralizzato
+ * SayHi - Assistente Scolastico Centralizzato
  * Logica del Chatbot per Mitigazione Sovraccarico Informativo
  * ============================================================================
  * Gestisce 10 interazioni chiave:
@@ -43,7 +43,6 @@ const DOM = {
     messageInput: document.getElementById('message-input'),
     sendButton: document.getElementById('send-button'),
     typingIndicator: document.getElementById('typing-indicator'),
-    notificationBadge: document.getElementById('notification-count'),
     userName: document.querySelector('.user-name'),
     userRole: document.querySelector('.user-role'),
     unreadCount: document.getElementById('unread-count'),
@@ -55,9 +54,7 @@ const DOM = {
     emergencySend: document.getElementById('emergency-send'),
     emergencyInput: document.getElementById('emergency-input'),
     emergencyMessageText: document.getElementById('emergency-message-text'),
-    currentDateDisplay: document.getElementById('current-date-display'),
-    dismissEmergency: document.getElementById('dismiss-emergency'),
-    emergencyDismissBtn: document.querySelector('.emergency-btn-send')
+    currentDateDisplay: document.getElementById('current-date-display')
 };
 
 // ============================================================================
@@ -67,14 +64,13 @@ const DOM = {
 async function caricaDati() {
     try {
         const response = await fetch('data.json');
-        if (!response.ok) throw new Error('Impossibile caricare i dati');
+        if (!response.ok) throw new Error(`HTTP ${response.status}: Impossibile caricare i dati`);
         AppState.dati = await response.json();
         inizializzaInterfaccia();
-        console.log('✅ Dati JSON caricati con successo');
+        console.log('✅ Dati JSON caricati con successo da pagina_web/data.json');
     } catch (errore) {
         console.error('❌ Errore caricamento dati:', errore);
-        // Fallback: mostra errore nella chat
-        aggiungiMessaggioBot('⚠️ Mi dispiace, non riesco a caricare i dati. Riprova più tardi o contatta l\'amministratore.');
+        aggiungiMessaggioBot('⚠️ Mi dispiace, non riesco a caricare i dati. Verifica che il file data.json esista o contatta l\'amministratore.');
     }
 }
 
@@ -83,34 +79,46 @@ async function caricaDati() {
 // ============================================================================
 
 function inizializzaInterfaccia() {
+    if (!AppState.dati) return;
+    
     const dati = AppState.dati;
     const oggi = new Date().toISOString().split('T')[0];
     
     // Aggiorna nome e ruolo
-    if (DOM.userName) DOM.userName.textContent = dati.utente.nome + ' ' + dati.utente.cognome;
-    if (DOM.userRole) DOM.userRole.textContent = dati.utente.ruolo.charAt(0).toUpperCase() + dati.utente.ruolo.slice(1) + ' - ' + dati.utente.classe;
+    if (DOM.userName && dati.utente) {
+        DOM.userName.textContent = `${dati.utente.nome} ${dati.utente.cognome}`;
+    }
+    if (DOM.userRole && dati.utente) {
+        DOM.userRole.textContent = `${capitalize(dati.utente.ruolo)} - ${dati.utente.classe}`;
+    }
     
     // Aggiorna statistiche
-    const circolariNonLette = dati.circolari.filter(c => !c.letta).length;
-    const moduliInScadenza = dati.moduli.filter(m => m.stato === 'da_firmare' && m.scadenza >= oggi).length;
-    const eventiOggi = dati.eventi.filter(e => e.data === oggi).length;
+    if (dati.circolari) {
+        const circolariNonLette = dati.circolari.filter(c => !c.letta).length;
+        if (DOM.unreadCount) DOM.unreadCount.textContent = circolariNonLette;
+    }
     
-    if (DOM.unreadCount) DOM.unreadCount.textContent = circolariNonLette;
-    if (DOM.pendingTasks) DOM.pendingTasks.textContent = moduliInScadenza;
-    if (DOM.todayEvents) DOM.todayEvents.textContent = eventiOggi;
+    if (dati.moduli) {
+        const moduliInScadenza = dati.moduli.filter(m => m.stato === 'da_firmare' && m.scadenza >= oggi).length;
+        if (DOM.pendingTasks) DOM.pendingTasks.textContent = moduliInScadenza;
+    }
     
-    // Aggiorna badge notifiche
-    if (DOM.notificationBadge) {
-        DOM.notificationBadge.textContent = circolariNonLette;
-        DOM.notificationBadge.hidden = circolariNonLette === 0;
+    if (dati.eventi) {
+        const eventiOggi = dati.eventi.filter(e => e.data === oggi).length;
+        if (DOM.todayEvents) DOM.todayEvents.textContent = eventiOggi;
     }
     
     // Data corrente
     if (DOM.currentDateDisplay) {
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         const oggiFormattato = new Date().toLocaleDateString('it-IT', options);
-        DOM.currentDateDisplay.textContent = oggiFormattato.charAt(0).toUpperCase() + oggiFormattato.slice(1);
+        DOM.currentDateDisplay.textContent = capitalize(oggiFormattato);
     }
+}
+
+function capitalize(str) {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 // ============================================================================
@@ -124,7 +132,7 @@ function aggiungiMessaggioUtente(testo) {
         <div class="message message-user">
             <div class="message-content">
                 <div class="message-bubble">
-                    <p>${escapeHTML(testo)}</p>
+                    <p class="mb-0">${escapeHTML(testo)}</p>
                 </div>
                 <span class="message-time">${ora}</span>
             </div>
@@ -139,19 +147,19 @@ function aggiungiMessaggioUtente(testo) {
 function aggiungiMessaggioBot(testo) {
     const ora = new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
     
+    // Supporto per **grassetto** e newline
+    const testoFormattato = escapeHTML(testo)
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>');
+    
     const messaggioHTML = `
         <div class="message message-bot">
             <div class="message-avatar" aria-hidden="true">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <circle cx="12" cy="12" r="10"/>
-                    <circle cx="9" cy="10" r="1.5" fill="white"/>
-                    <circle cx="15" cy="10" r="1.5" fill="white"/>
-                    <path d="M9 14C9.5 15 11 16 12 16C13 16 14.5 15 15 14" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-                </svg>
+                <i class="bi bi-robot"></i>
             </div>
             <div class="message-content">
                 <div class="message-bubble">
-                    <p>${escapeHTML(testo)}</p>
+                    <p class="mb-0">${testoFormattato}</p>
                 </div>
                 <span class="message-time">${ora}</span>
             </div>
@@ -169,12 +177,7 @@ function aggiungiCardHTML(html) {
     const messaggioHTML = `
         <div class="message message-bot">
             <div class="message-avatar" aria-hidden="true">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <circle cx="12" cy="12" r="10"/>
-                    <circle cx="9" cy="10" r="1.5" fill="white"/>
-                    <circle cx="15" cy="10" r="1.5" fill="white"/>
-                    <path d="M9 14C9.5 15 11 16 12 16C13 16 14.5 15 15 14" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-                </svg>
+                <i class="bi bi-robot"></i>
             </div>
             <div class="message-content">
                 ${html}
@@ -188,16 +191,22 @@ function aggiungiCardHTML(html) {
 }
 
 function mostraTypingIndicator() {
-    DOM.typingIndicator.hidden = false;
-    scrollaInFondo();
+    if (DOM.typingIndicator) {
+        DOM.typingIndicator.hidden = false;
+        scrollaInFondo();
+    }
 }
 
 function nascondiTypingIndicator() {
-    DOM.typingIndicator.hidden = true;
+    if (DOM.typingIndicator) {
+        DOM.typingIndicator.hidden = true;
+    }
 }
 
 function scrollaInFondo() {
-    DOM.chatMessages.scrollTop = DOM.chatMessages.scrollHeight;
+    if (DOM.chatMessages) {
+        DOM.chatMessages.scrollTop = DOM.chatMessages.scrollHeight;
+    }
 }
 
 function escapeHTML(testo) {
@@ -213,7 +222,7 @@ function escapeHTML(testo) {
 function simulaRispostaBot(messaggioUtente) {
     mostraTypingIndicator();
     
-    // Simula ritardo di risposta (1-2 secondi)
+    // Simula ritardo di risposta (800-2000ms)
     const ritardo = 800 + Math.random() * 1200;
     
     setTimeout(() => {
@@ -227,93 +236,105 @@ function simulaRispostaBot(messaggioUtente) {
 // ============================================================================
 
 function elaboraMessaggio(messaggio) {
+    if (!AppState.dati) {
+        aggiungiMessaggioBot('⚠️ Dati non ancora caricati. Attendi un momento o ricarica la pagina.');
+        return;
+    }
+    
     const dati = AppState.dati;
-    const oggi = new Date().toISOString().split('T')[0];
     
     // Interazione 10: Gestione emergenze
-    if (contieneParoleChiave(messaggio, ['emergenza', 'aiuto', 'urgente', 'pericolo', 'critico'])) {
+    if (contieneParoleChiave(messaggio, ['emergenza', 'aiuto', 'urgente', 'pericolo', 'critico', 'allarme'])) {
         gestisciEmergenza(messaggio);
         return;
     }
     
     // Interazione 1: Circolari recenti
-    if (contieneParoleChiave(messaggio, ['circolari', 'comunicazioni', 'ultime notizie', 'recenti', 'news'])) {
+    if (contieneParoleChiave(messaggio, ['circolari', 'comunicazioni', 'ultime notizie', 'recenti', 'news', 'avvisi'])) {
         mostraCircolariRecenti();
         return;
     }
     
     // Interazione 2: Ricerca per parola chiave
-    if (contieneParoleChiave(messaggio, ['cerca', 'trova', 'cercami']) || 
-        messaggio.includes('parola') || messaggio.includes('argomento')) {
-        // Estrai parola chiave dopo "cerca" o "trova"
+    if (contieneParoleChiave(messaggio, ['cerca', 'trova', 'cercami', 'ricerca'])) {
         const parole = messaggio.split(' ');
-        const indiceCerca = parole.findIndex(p => ['cerca', 'cercami', 'trova'].includes(p));
+        const indiceCerca = parole.findIndex(p => ['cerca', 'cercami', 'trova', 'ricerca'].includes(p));
         if (indiceCerca >= 0 && indiceCerca < parole.length - 1) {
             const keyword = parole.slice(indiceCerca + 1).join(' ');
             cercaPerParolaChiave(keyword);
         } else {
-            aggiungiMessaggioBot('Cosa vuoi cercare? Prova a scrivere "cerca [parola]" oppure dimmi l\'argomento che ti interessa.');
+            aggiungiMessaggioBot('Cosa vuoi cercare? Prova a scrivere "cerca [parola]" oppure "trova [argomento]".');
         }
         return;
     }
     
     // Interazione 3: Scadenze
-    if (contieneParoleChiave(messaggio, ['scadenze', 'scade', 'scadenza', 'imminente', 'prossima scadenza', 'cosa scade'])) {
+    if (contieneParoleChiave(messaggio, ['scadenze', 'scade', 'scadenza', 'imminente', 'prossima scadenza', 'cose scade'])) {
         mostraScadenze();
         return;
     }
     
     // Interazione 6: Orario
-    if (contieneParoleChiave(messaggio, ['orario', 'lezioni', 'materie', 'domani'])) {
+    if (contieneParoleChiave(messaggio, ['orario', 'lezioni', 'materie', 'domani', 'lezione'])) {
         mostraOrario();
         return;
     }
     
     // Interazione 7: Contatti
-    if (contieneParoleChiave(messaggio, ['contatti', 'docenti', 'professori', 'email', 'ricevimento'])) {
+    if (contieneParoleChiave(messaggio, ['contatti', 'docenti', 'professori', 'email', 'ricevimento', 'contatto'])) {
         mostraContatti();
         return;
     }
     
     // Interazione 9: Eventi / Calendario
-    if (contieneParoleChiave(messaggio, ['eventi', 'calendario', 'appuntamenti', 'programma', 'prossimi'])) {
+    if (contieneParoleChiave(messaggio, ['eventi', 'calendario', 'appuntamenti', 'programma', 'prossimi', 'agenda'])) {
         mostraEventi();
         return;
     }
     
     // Interazione 8: Moduli
-    if (contieneParoleChiave(messaggio, ['moduli', 'firmare', 'autorizzazione', 'compilare'])) {
+    if (contieneParoleChiave(messaggio, ['moduli', 'firmare', 'autorizzazione', 'compilare', 'firma', 'modulo'])) {
         mostraModuliDaFirmare();
         return;
     }
     
-    // Interazione 4: Dettaglio circolare specifica (via numero o titolo)
-    if (contieneParoleChiave(messaggio, ['dettaglio', 'leggi', 'apri', 'mostra circolare'])) {
+    // Interazione 4: Dettaglio circolare specifica (via ID o numero)
+    if (contieneParoleChiave(messaggio, ['dettaglio', 'leggi', 'apri', 'mostra', 'visualizza'])) {
         const match = messaggio.match(/\d+/);
         if (match) {
-            mostraDettaglioCircolare(parseInt(match[0]));
-            return;
+            mostraDettaglioCircolare(match[0]);
+        } else {
+            aggiungiMessaggioBot('Di quale circolare vuoi il dettaglio? Scrivi "leggi circolare [numero]"');
         }
+        return;
     }
     
     // Saluti
-    if (contieneParoleChiave(messaggio, ['ciao', 'salve', 'buongiorno', 'buonasera', 'hey'])) {
-        const saluti = dati.risposte_predefinite.saluto;
+    if (contieneParoleChiave(messaggio, ['ciao', 'salve', 'buongiorno', 'buonasera', 'hey', 'buondi'])) {
+        const saluti = dati.risposte_predefinite?.saluto || ['Ciao! Come posso aiutarti?', 'Eccomi! Dimmi pure.'];
         aggiungiMessaggioBot(saluti[Math.floor(Math.random() * saluti.length)]);
-        aggiungiSuggerimentiRapidi();
+        return;
+    }
+    
+    // Ringraziamenti
+    if (contieneParoleChiave(messaggio, ['grazie', 'ti ringrazio', 'thanks', 'perfetto', 'ottimo'])) {
+        aggiungiMessaggioBot('Di nulla! 😊 Sono qui per aiutarti. Se hai altre domande, chiedi pure!');
         return;
     }
     
     // Aiuto / cosa puoi fare
-    if (contieneParoleChiave(messaggio, ['cosa puoi fare', 'aiuto', 'help', 'funzioni', 'capacità'])) {
+    if (contieneParoleChiave(messaggio, ['cosa puoi fare', 'aiuto', 'help', 'funzioni', 'capacità', 'come funzioni'])) {
         mostraAiuto();
         return;
     }
     
     // Fallback: messaggio non riconosciuto
-    const errori = dati.risposte_predefinite.errore;
+    const errori = dati.risposte_predefinite?.errore || [
+        'Non ho capito. Puoi riformulare la domanda?',
+        'Scusa, non ho compreso. Prova a chiedermi diversamente.',
+        'Non sono sicuro di aver capito. Puoi essere più specifico?'
+    ];
     aggiungiMessaggioBot(errori[Math.floor(Math.random() * errori.length)]);
-    aggiungiSuggerimentiRapidi();
 }
 
 // ============================================================================
@@ -324,12 +345,23 @@ function contieneParoleChiave(testo, paroleChiave) {
     return paroleChiave.some(parola => testo.includes(parola));
 }
 
+function formattaData(dataISO) {
+    if (!dataISO) return 'N/D';
+    const [anno, mese, giorno] = dataISO.split('-');
+    return `${giorno}/${mese}/${anno}`;
+}
+
 // ============================================================================
 // INTERAZIONE 1: MOSTRA CIRCOLARI RECENTI
 // ============================================================================
 
 function mostraCircolariRecenti() {
     const dati = AppState.dati;
+    if (!dati.circolari || dati.circolari.length === 0) {
+        aggiungiMessaggioBot('📋 Non ci sono circolari disponibili al momento.');
+        return;
+    }
+    
     const circolari = dati.circolari.slice(0, 3);
     
     let cardHTML = `
@@ -345,33 +377,28 @@ function mostraCircolariRecenti() {
         const iconaPriorita = circ.priorita === 'urgente' ? '🔴 Urgente' : 
                                circ.priorita === 'importante' ? '🟡 Importante' : '🔵 Ordinaria';
         
-        const allegatiHTML = circ.allegati.map(a => 
-            `<button class="card-btn" onclick="scaricaAllegato('${circ.id}', '${a.url}', '${a.nome}')">📎 ${a.nome}</button>`
-        ).join(' ');
+        const allegatiHTML = (circ.allegati && circ.allegati.length > 0) ? 
+            circ.allegati.map(a => 
+                `<button class="card-btn" onclick="window.scaricaAllegato('${circ.id}', '${a.url}', '${a.nome}')">📎 ${a.nome}</button>`
+            ).join(' ') : '';
         
         cardHTML += `
             <div class="circolare-card priority-${classePriorita}" tabindex="0">
-                <div class="card-header">
-                    <span class="priority-tag ${classePriorita}">${iconaPriorita}</span>
-                    <span class="card-date">${formattaData(circ.data_pubblicazione)}</span>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <small class="text-white-50">${iconaPriorita}</small>
+                    <small class="text-white-50">${formattaData(circ.data_pubblicazione)}</small>
                 </div>
-                <h4 class="card-title">${circ.titolo}</h4>
-                <p class="card-excerpt">${circ.corpo}</p>
-                <div class="card-actions">
+                <h6 class="text-white fw-bold">${escapeHTML(circ.titolo)}</h6>
+                <p class="text-white-50 small">${escapeHTML(circ.corpo.substring(0, 100))}...</p>
+                <div class="d-flex gap-2 flex-wrap">
                     ${allegatiHTML}
-                    <button class="card-btn" onclick="mostraDettaglioCircolare('${circ.id}')">📖 Leggi tutto</button>
+                    <button class="card-btn" onclick="window.mostraDettaglioCircolare('${circ.id}')">📖 Leggi tutto</button>
                 </div>
             </div>
         `;
     });
     
-    cardHTML += `
-        </div>
-        <div class="message-bubble message-followup">
-            <p>Vuoi vedere altre circolari o filtrarle per categoria?</p>
-        </div>
-    `;
-    
+    cardHTML += `</div>`;
     aggiungiCardHTML(cardHTML);
 }
 
@@ -381,22 +408,25 @@ function mostraCircolariRecenti() {
 
 function cercaPerParolaChiave(keyword) {
     const dati = AppState.dati;
+    if (!dati.circolari) {
+        aggiungiMessaggioBot('⚠️ Database circolari non disponibile.');
+        return;
+    }
+    
     const risultati = dati.circolari.filter(circ => 
         circ.titolo.toLowerCase().includes(keyword.toLowerCase()) ||
         circ.corpo.toLowerCase().includes(keyword.toLowerCase()) ||
-        circ.categoria.toLowerCase().includes(keyword.toLowerCase())
+        (circ.categoria && circ.categoria.toLowerCase().includes(keyword.toLowerCase()))
     );
     
     if (risultati.length === 0) {
-        // Fallback: nessun risultato
-        aggiungiMessaggioBot(`🔍 Nessuna circolare trovata per "${keyword}". Prova con altre parole chiave o controlla le circolari recenti.`);
-        aggiungiSuggerimentiRapidi();
+        aggiungiMessaggioBot(`🔍 Nessuna circolare trovata per **${keyword}**. Prova con altre parole chiave o controlla le circolari recenti.`);
         return;
     }
     
     let cardHTML = `
         <div class="message-bubble">
-            <p>🔍 Ho trovato ${risultati.length} circolari per "${keyword}":</p>
+            <p>🔍 Ho trovato ${risultati.length} circolari per **${keyword}**:</p>
         </div>
         <div class="circolari-cards">
     `;
@@ -407,15 +437,13 @@ function cercaPerParolaChiave(keyword) {
         
         cardHTML += `
             <div class="circolare-card priority-${classePriorita}" tabindex="0">
-                <div class="card-header">
-                    <span class="priority-tag ${classePriorita}">${circ.priorita}</span>
-                    <span class="card-date">${formattaData(circ.data_pubblicazione)}</span>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <small class="text-white-50">${escapeHTML(circ.priorita)}</small>
+                    <small class="text-white-50">${formattaData(circ.data_pubblicazione)}</small>
                 </div>
-                <h4 class="card-title">${circ.titolo}</h4>
-                <p class="card-excerpt">${circ.corpo.substring(0, 100)}...</p>
-                <div class="card-actions">
-                    <button class="card-btn" onclick="mostraDettaglioCircolare('${circ.id}')">📖 Leggi tutto</button>
-                </div>
+                <h6 class="text-white fw-bold">${escapeHTML(circ.titolo)}</h6>
+                <p class="text-white-50 small">${escapeHTML(circ.corpo.substring(0, 100))}...</p>
+                <button class="card-btn" onclick="window.mostraDettaglioCircolare('${circ.id}')">📖 Leggi tutto</button>
             </div>
         `;
     });
@@ -432,20 +460,33 @@ function mostraScadenze() {
     const dati = AppState.dati;
     const oggi = new Date().toISOString().split('T')[0];
     
-    const scadenze = [
-        ...dati.circolari.filter(c => c.scadenza && c.scadenza >= oggi).map(c => ({
-            tipo: 'circolare',
-            titolo: c.titolo,
-            data: c.scadenza,
-            priorita: c.priorita
-        })),
-        ...dati.moduli.filter(m => m.scadenza && m.scadenza >= oggi).map(m => ({
-            tipo: 'modulo',
-            titolo: m.titolo,
-            data: m.scadenza,
-            priorita: 'importante'
-        }))
-    ].sort((a, b) => a.data.localeCompare(b.data));
+    let scadenze = [];
+    
+    if (dati.circolari) {
+        scadenze.push(...dati.circolari
+            .filter(c => c.scadenza && c.scadenza >= oggi)
+            .map(c => ({
+                tipo: 'circolare',
+                titolo: c.titolo,
+                data: c.scadenza,
+                priorita: c.priorita
+            }))
+        );
+    }
+    
+    if (dati.moduli) {
+        scadenze.push(...dati.moduli
+            .filter(m => m.scadenza && m.scadenza >= oggi && m.stato === 'da_firmare')
+            .map(m => ({
+                tipo: 'modulo',
+                titolo: m.titolo,
+                data: m.scadenza,
+                priorita: 'importante'
+            }))
+        );
+    }
+    
+    scadenze.sort((a, b) => a.data.localeCompare(b.data));
     
     if (scadenze.length === 0) {
         aggiungiMessaggioBot('✅ Non ci sono scadenze imminenti! Ottimo lavoro.');
@@ -454,7 +495,8 @@ function mostraScadenze() {
     
     let risposta = '⏰ **Scadenze in arrivo:**\n\n';
     scadenze.slice(0, 5).forEach((s, i) => {
-        risposta += `${i + 1}. ${s.titolo} → **${formattaData(s.data)}**\n`;
+        const emoji = s.priorita === 'urgente' ? '🔴' : s.priorita === 'importante' ? '🟡' : '🔵';
+        risposta += `${i + 1}. ${emoji} ${s.titolo} → **${formattaData(s.data)}**\n`;
     });
     
     aggiungiMessaggioBot(risposta);
@@ -466,10 +508,15 @@ function mostraScadenze() {
 
 function mostraDettaglioCircolare(idCircolare) {
     const dati = AppState.dati;
+    if (!dati.circolari) {
+        aggiungiMessaggioBot('⚠️ Database circolari non disponibile.');
+        return;
+    }
+    
     const circ = dati.circolari.find(c => c.id === idCircolare);
     
     if (!circ) {
-        aggiungiMessaggioBot('❌ Circolare non trovata. Controlla l\'ID e riprova.');
+        aggiungiMessaggioBot(`❌ Circolare con ID "${idCircolare}" non trovata. Controlla l'ID e riprova.`);
         return;
     }
     
@@ -477,18 +524,18 @@ function mostraDettaglioCircolare(idCircolare) {
     circ.letta = true;
     aggiornaStatistiche();
     
-    const allegatiHTML = circ.allegati.length > 0 ? 
+    const allegatiHTML = (circ.allegati && circ.allegati.length > 0) ? 
         `<p>📎 <strong>Allegati:</strong> ${circ.allegati.map(a => a.nome).join(', ')}</p>` : '';
     
     const html = `
         <div class="message-bubble">
-            <p><strong>📄 ${circ.titolo}</strong></p>
+            <p><strong>📄 ${escapeHTML(circ.titolo)}</strong></p>
             <p>📅 Pubblicata: ${formattaData(circ.data_pubblicazione)}</p>
-            <p>🏷️ Categoria: ${circ.categoria}</p>
-            <p>⚠️ Priorità: ${circ.priorita}</p>
+            <p>🏷️ Categoria: ${escapeHTML(circ.categoria || 'N/D')}</p>
+            <p>⚠️ Priorità: ${escapeHTML(circ.priorita)}</p>
             ${circ.scadenza ? `<p>⏰ Scadenza: ${formattaData(circ.scadenza)}</p>` : ''}
-            <hr style="margin: 10px 0; border: 0.5px solid #e2e8f0;">
-            <p>${circ.corpo}</p>
+            <hr style="border-color: rgba(255,255,255,0.1); margin: 10px 0;">
+            <p>${escapeHTML(circ.corpo)}</p>
             ${allegatiHTML}
         </div>
     `;
@@ -501,43 +548,106 @@ function mostraDettaglioCircolare(idCircolare) {
 // ============================================================================
 
 function scaricaAllegato(idCircolare, url, nomeFile) {
-    aggiungiMessaggioBot(`📥 Sto preparando il download di "${nomeFile}"...`);
+    aggiungiMessaggioBot(`📥 Sto preparando il download di **${nomeFile}**...`);
     
-    // Simula download (in produzione: window.open(url))
+    // In produzione: window.open(url, '_blank') o fetch per il download
     setTimeout(() => {
-        aggiungiMessaggioBot(`✅ File "${nomeFile}" scaricato con successo!`);
+        aggiungiMessaggioBot(`✅ File **${nomeFile}** scaricato con successo! Se il download non parte automaticamente, <a href="${url}" target="_blank" class="text-info">clicca qui</a>.`);
     }, 1000);
 }
 
 // ============================================================================
-// INTERAZIONE 6: MOSTRA ORARIO
+// INTERAZIONE 6: MOSTRA ORARIO (MIGLIORATA)
 // ============================================================================
 
 function mostraOrario() {
     const dati = AppState.dati;
-    const orario = dati.orario['3B']; // Prende orario della classe dell'utente
+    const classe = AppState.contesto.classe;
+    const messaggioOriginale = arguments[1] || ''; // Passa il messaggio utente se disponibile
     
-    if (!orario) {
-        aggiungiMessaggioBot('❌ Orario non disponibile per questa classe.');
+    if (!dati.orario || !dati.orario[classe]) {
+        aggiungiMessaggioBot(`❌ Orario non disponibile per la classe ${classe}.`);
         return;
     }
     
-    const giorni = ['lunedì', 'martedì', 'mercoledì', 'giovedì', 'venerdì', 'sabato'];
-    const domani = new Date();
-    domani.setDate(domani.getDate() + 1);
-    const giornoDomani = giorni[domani.getDay() - 1];
+    const orario = dati.orario[classe];
+    const giorniSettimana = ['lunedì', 'martedì', 'mercoledì', 'giovedì', 'venerdì', 'sabato'];
+    const oggi = new Date();
+    const giornoOggiIndex = oggi.getDay(); // 0 = domenica, 1 = lunedì, ..., 6 = sabato
+    const giornoOggiNome = giorniSettimana[giornoOggiIndex - 1]; // converte a lunedì=0
     
-    const orarioDomani = orario[giornoDomani];
+    // Controlla se l'utente ha chiesto un giorno specifico o "domani"
+    let giornoRichiesto = null;
     
-    if (orarioDomani) {
-        let risposta = `📚 **Orario di domani (${giornoDomani}):**\n\n`;
-        orarioDomani.forEach(lezione => {
-            risposta += `🕐 ${lezione.ora} - ${lezione.materia} (${lezione.docente})\n`;
-        });
-        aggiungiMessaggioBot(risposta);
-    } else {
-        aggiungiMessaggioBot('📚 Domani non ci sono lezioni!');
+    // Verifica se ha chiesto "domani"
+    if (contieneParoleChiave(messaggioOriginale, ['domani'])) {
+        const domani = new Date(oggi);
+        domani.setDate(oggi.getDate() + 1);
+        const domaniIndex = domani.getDay();
+        giornoRichiesto = giorniSettimana[domaniIndex - 1];
     }
+    // Verifica se ha chiesto un giorno della settimana specifico
+    else {
+        for (let giorno of giorniSettimana) {
+            if (contieneParoleChiave(messaggioOriginale, [giorno])) {
+                giornoRichiesto = giorno;
+                break;
+            }
+        }
+    }
+    
+    // Se non ha chiesto un giorno specifico, mostra l'orario di oggi (se è un giorno scolastico)
+    if (!giornoRichiesto) {
+        // Se oggi è un giorno scolastico (lunedì-sabato) e esiste l'orario
+        if (giornoOggiIndex >= 1 && giornoOggiIndex <= 6 && orario[giornoOggiNome]) {
+            giornoRichiesto = giornoOggiNome;
+        } else {
+            // Oggi non è giorno scolastico -> mostra il prossimo giorno con lezioni
+            let trovato = false;
+            for (let i = 1; i <= 7; i++) {
+                const giornoTest = new Date(oggi);
+                giornoTest.setDate(oggi.getDate() + i);
+                const giornoTestIndex = giornoTest.getDay();
+                const giornoTestNome = giorniSettimana[giornoTestIndex - 1];
+                if (giornoTestIndex >= 1 && giornoTestIndex <= 6 && orario[giornoTestNome]) {
+                    giornoRichiesto = giornoTestNome;
+                    trovato = true;
+                    break;
+                }
+            }
+            if (!trovato) {
+                aggiungiMessaggioBot(`📚 Non ci sono lezioni programmate per i prossimi giorni. Controlla il calendario scolastico. 🎉`);
+                return;
+            }
+        }
+    }
+    
+    const lezioniGiorno = orario[giornoRichiesto];
+    
+    if (!lezioniGiorno || lezioniGiorno.length === 0) {
+        aggiungiMessaggioBot(`📚 ${capitalize(giornoRichiesto)} non ci sono lezioni! Goditi la giornata. 🎉`);
+        return;
+    }
+    
+    // Determina se è oggi, domani o altro giorno
+    let prefisso = '';
+    if (giornoRichiesto === giornoOggiNome && giornoOggiIndex >= 1 && giornoOggiIndex <= 6) {
+        prefisso = '📚 **Orario di oggi**';
+    } else if (contieneParoleChiave(messaggioOriginale, ['domani'])) {
+        prefisso = `📚 **Orario di domani (${capitalize(giornoRichiesto)})**`;
+    } else {
+        prefisso = `📚 **Orario di ${capitalize(giornoRichiesto)}**`;
+    }
+    
+    let risposta = `${prefisso}:\n\n`;
+    lezioniGiorno.forEach(lezione => {
+        risposta += `🕐 ${lezione.ora} - ${lezione.materia} (${lezione.docente})\n`;
+    });
+    
+    // Aggiunge un suggerimento per altri giorni
+    risposta += `\n💡 Puoi chiedermi: "orario di martedì" o "domani" per altri giorni.`;
+    
+    aggiungiMessaggioBot(risposta);
 }
 
 // ============================================================================
@@ -546,15 +656,19 @@ function mostraOrario() {
 
 function mostraContatti() {
     const dati = AppState.dati;
-    const contatti = dati.contatti;
+    
+    if (!dati.contatti || dati.contatti.length === 0) {
+        aggiungiMessaggioBot('👥 Nessun contatto disponibile al momento.');
+        return;
+    }
     
     let risposta = '👥 **Contatti disponibili:**\n\n';
     
-    contatti.forEach(c => {
-        risposta += `**${c.nome}**\n`;
-        if (c.materia) risposta += `📚 ${c.materia}\n`;
-        risposta += `📧 ${c.email}\n`;
-        if (c.ricevimento) risposta += `🕐 Ricevimento: ${c.ricevimento}\n`;
+    dati.contatti.forEach(c => {
+        risposta += `**${escapeHTML(c.nome)}**\n`;
+        if (c.materia) risposta += `📚 ${escapeHTML(c.materia)}\n`;
+        risposta += `📧 ${escapeHTML(c.email)}\n`;
+        if (c.ricevimento) risposta += `🕐 Ricevimento: ${escapeHTML(c.ricevimento)}\n`;
         risposta += '\n';
     });
     
@@ -567,6 +681,12 @@ function mostraContatti() {
 
 function mostraModuliDaFirmare() {
     const dati = AppState.dati;
+    
+    if (!dati.moduli) {
+        aggiungiMessaggioBot('⚠️ Database moduli non disponibile.');
+        return;
+    }
+    
     const moduli = dati.moduli.filter(m => m.stato === 'da_firmare');
     
     if (moduli.length === 0) {
@@ -577,21 +697,12 @@ function mostraModuliDaFirmare() {
     let risposta = '✍️ **Moduli in attesa di firma:**\n\n';
     
     moduli.forEach((m, i) => {
-        risposta += `${i + 1}. **${m.titolo}**\n`;
-        risposta += `   📝 ${m.descrizione}\n`;
-        risposta += `   ⏰ Scadenza: ${formattaData(m.scadenza)}\n`;
-        risposta += `   Scrivi "compila modulo ${i + 1}" per iniziare la compilazione assistita.\n\n`;
+        risposta += `${i + 1}. **${escapeHTML(m.titolo)}**\n`;
+        risposta += `   📝 ${escapeHTML(m.descrizione)}\n`;
+        risposta += `   ⏰ Scadenza: ${formattaData(m.scadenza)}\n\n`;
     });
     
     aggiungiMessaggioBot(risposta);
-    
-    // Avvia compilazione assistita se richiesto
-    if (messaggio.includes('compila modulo')) {
-        const match = messaggio.match(/\d+/);
-        if (match && moduli[parseInt(match[0]) - 1]) {
-            avviaCompilazioneModulo(moduli[parseInt(match[0]) - 1]);
-        }
-    }
 }
 
 // ============================================================================
@@ -600,8 +711,17 @@ function mostraModuliDaFirmare() {
 
 function mostraEventi() {
     const dati = AppState.dati;
+    
+    if (!dati.eventi || dati.eventi.length === 0) {
+        aggiungiMessaggioBot('📅 Nessun evento in programma per i prossimi giorni.');
+        return;
+    }
+    
     const oggi = new Date().toISOString().split('T')[0];
-    const eventiFuturi = dati.eventi.filter(e => e.data >= oggi).slice(0, 5);
+    const eventiFuturi = dati.eventi
+        .filter(e => e.data >= oggi)
+        .sort((a, b) => a.data.localeCompare(b.data))
+        .slice(0, 5);
     
     if (eventiFuturi.length === 0) {
         aggiungiMessaggioBot('📅 Nessun evento in programma per i prossimi giorni.');
@@ -611,10 +731,9 @@ function mostraEventi() {
     let risposta = '📅 **Prossimi eventi:**\n\n';
     
     eventiFuturi.forEach(e => {
-        risposta += `📌 **${e.titolo}**\n`;
-        risposta += `📅 ${formattaData(e.data)} | 🕐 ${e.ora_inizio}-${e.ora_fine}\n`;
-        risposta += `📍 ${e.luogo}\n`;
-        risposta += `✚ Scrivi "aggiungi al calendario ${e.id}" per sincronizzare\n\n`;
+        risposta += `📌 **${escapeHTML(e.titolo)}**\n`;
+        risposta += `📅 ${formattaData(e.data)} | 🕐 ${e.ora_inizio || '?'}-${e.ora_fine || '?'}\n`;
+        risposta += `📍 ${escapeHTML(e.luogo || 'Da definire')}\n\n`;
     });
     
     aggiungiMessaggioBot(risposta);
@@ -625,43 +744,15 @@ function mostraEventi() {
 // ============================================================================
 
 function gestisciEmergenza(messaggio) {
-    DOM.emergencyOverlay.hidden = false;
-    DOM.emergencyMessageText.textContent = 'Descrivi brevemente la situazione di emergenza. Un operatore ti risponderà immediatamente.';
-}
-
-// ============================================================================
-// COMPILAZIONE MODULO ASSISTITA (Parte dell'Interazione 8)
-// ============================================================================
-
-function avviaCompilazioneModulo(modulo) {
-    AppState.contesto.moduloCorrente = modulo;
-    AppState.contesto.stepModulo = 0;
-    
-    aggiungiMessaggioBot(`✍️ **Compilazione assistita: ${modulo.titolo}**\n\nTi guiderò passo dopo passo. Iniziamo!\n\n${modulo.campi[0].nome}:`);
-}
-
-// ============================================================================
-// SUGGERIMENTI RAPIDI
-// ============================================================================
-
-function aggiungiSuggerimentiRapidi() {
-    const html = `
-        <div class="message-bubble message-followup">
-            <p>Ecco cosa posso fare per te:</p>
-        </div>
-        <div class="message-suggestions">
-            <div class="suggestion-chips">
-                <button class="suggestion-chip" onclick="inviaPrompt('circolari recenti')">📋 Circolari recenti</button>
-                <button class="suggestion-chip" onclick="inviaPrompt('scadenze')">⏰ Scadenze</button>
-                <button class="suggestion-chip" onclick="inviaPrompt('orario')">📚 Orario</button>
-                <button class="suggestion-chip" onclick="inviaPrompt('eventi')">📅 Eventi</button>
-                <button class="suggestion-chip" onclick="inviaPrompt('contatti')">👥 Contatti</button>
-                <button class="suggestion-chip" onclick="inviaPrompt('moduli da firmare')">✍️ Moduli</button>
-            </div>
-        </div>
-    `;
-    
-    aggiungiCardHTML(html);
+    if (DOM.emergencyOverlay) {
+        DOM.emergencyOverlay.hidden = false;
+        if (DOM.emergencyMessageText) {
+            DOM.emergencyMessageText.textContent = 'Descrivi brevemente la situazione di emergenza. Un operatore ti risponderà immediatamente.';
+        }
+        if (DOM.emergencyInput) {
+            DOM.emergencyInput.focus();
+        }
+    }
 }
 
 // ============================================================================
@@ -674,7 +765,7 @@ function mostraAiuto() {
 📋 **Circolari** - "mostrami le circolari recenti"
 🔍 **Ricerca** - "cerca [parola chiave]"
 ⏰ **Scadenze** - "cosa scade questa settimana?"
-📄 **Dettaglio** - "leggi circolare 1"
+📄 **Dettaglio** - "leggi circolare [id]"
 📎 **Allegati** - clicca sui pulsanti nelle card
 📚 **Orario** - "orario di domani"
 👥 **Contatti** - "contatti docenti"
@@ -685,27 +776,28 @@ function mostraAiuto() {
 Cosa posso fare per te ora?`;
     
     aggiungiMessaggioBot(risposta);
-    aggiungiSuggerimentiRapidi();
 }
 
 // ============================================================================
-// FUNZIONI UTILITY
+// UTILITY
 // ============================================================================
-
-function formattaData(dataISO) {
-    const [anno, mese, giorno] = dataISO.split('-');
-    return `${giorno}/${mese}/${anno}`;
-}
 
 function aggiornaStatistiche() {
-    const dati = AppState.dati;
+    if (!AppState.dati || !AppState.dati.circolari) return;
+    
     const oggi = new Date().toISOString().split('T')[0];
-    const nonLette = dati.circolari.filter(c => !c.letta).length;
+    const nonLette = AppState.dati.circolari.filter(c => !c.letta).length;
     
     if (DOM.unreadCount) DOM.unreadCount.textContent = nonLette;
-    if (DOM.notificationBadge) {
-        DOM.notificationBadge.textContent = nonLette;
-        DOM.notificationBadge.hidden = nonLette === 0;
+    
+    if (AppState.dati.moduli) {
+        const daFirmare = AppState.dati.moduli.filter(m => m.stato === 'da_firmare' && m.scadenza >= oggi).length;
+        if (DOM.pendingTasks) DOM.pendingTasks.textContent = daFirmare;
+    }
+    
+    if (AppState.dati.eventi) {
+        const eventiOggi = AppState.dati.eventi.filter(e => e.data === oggi).length;
+        if (DOM.todayEvents) DOM.todayEvents.textContent = eventiOggi;
     }
 }
 
@@ -713,8 +805,9 @@ function aggiornaStatistiche() {
 // GESTIONE EVENTI
 // ============================================================================
 
-// Invio messaggio
 function inviaMessaggio() {
+    if (!DOM.messageInput) return;
+    
     const testo = DOM.messageInput.value.trim();
     if (!testo || AppState.caricamento) return;
     
@@ -729,96 +822,119 @@ function inviaMessaggio() {
     simulaRispostaBot(testo);
 }
 
-// Prompt rapido (da chip cliccabili)
 function inviaPrompt(testo) {
-    DOM.messageInput.value = testo;
-    inviaMessaggio();
+    if (DOM.messageInput) {
+        DOM.messageInput.value = testo;
+        inviaMessaggio();
+    }
 }
 
 // ============================================================================
 // EVENT LISTENERS
 // ============================================================================
 
-// Invio con click
-DOM.sendButton.addEventListener('click', inviaMessaggio);
-
-// Invio con tasto Enter (Shift+Enter per nuova linea)
-DOM.messageInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        inviaMessaggio();
+function setupEventListeners() {
+    // Invio con click
+    if (DOM.sendButton) {
+        DOM.sendButton.addEventListener('click', inviaMessaggio);
     }
-});
-
-// Auto-resize textarea
-DOM.messageInput.addEventListener('input', function() {
-    this.style.height = 'auto';
-    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
-});
-
-// Gestione overlay emergenza
-if (DOM.emergencyTrigger) {
-    DOM.emergencyTrigger.addEventListener('click', () => {
-        DOM.emergencyOverlay.hidden = false;
+    
+    // Invio con tasto Enter (Shift+Enter per nuova linea)
+    if (DOM.messageInput) {
+        DOM.messageInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                inviaMessaggio();
+            }
+        });
+        
+        // Auto-resize textarea
+        DOM.messageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+    }
+    
+    // Gestione overlay emergenza
+    if (DOM.emergencyTrigger) {
+        DOM.emergencyTrigger.addEventListener('click', () => {
+            if (DOM.emergencyOverlay) DOM.emergencyOverlay.hidden = false;
+            if (DOM.emergencyInput) DOM.emergencyInput.focus();
+        });
+    }
+    
+    if (DOM.emergencyCancel) {
+        DOM.emergencyCancel.addEventListener('click', () => {
+            if (DOM.emergencyOverlay) DOM.emergencyOverlay.hidden = true;
+            if (DOM.emergencyInput) DOM.emergencyInput.value = '';
+        });
+    }
+    
+    if (DOM.emergencySend) {
+        DOM.emergencySend.addEventListener('click', () => {
+            const messaggio = DOM.emergencyInput ? DOM.emergencyInput.value.trim() : '';
+            if (messaggio) {
+                aggiungiMessaggioBot(`🚨 **Richiesta di emergenza inviata!**\nUn operatore ti risponderà immediatamente.\n\nMessaggio: "${escapeHTML(messaggio)}"`);
+            } else {
+                aggiungiMessaggioBot('🚨 **Richiesta di emergenza inviata!**\nUn operatore ti risponderà immediatamente.');
+            }
+            if (DOM.emergencyOverlay) DOM.emergencyOverlay.hidden = true;
+            if (DOM.emergencyInput) DOM.emergencyInput.value = '';
+        });
+    }
+    
+    // Chip suggerimenti (sia nella sidebar che nell'area sopra la textbar)
+    document.querySelectorAll('.suggestion-chip, .prompt-chip').forEach(chip => {
+        chip.addEventListener('click', function() {
+            const prompt = this.getAttribute('data-prompt') || this.textContent.trim();
+            inviaPrompt(prompt);
+        });
     });
-}
-
-if (DOM.emergencyCancel) {
-    DOM.emergencyCancel.addEventListener('click', () => {
-        DOM.emergencyOverlay.hidden = true;
-        DOM.emergencyInput.value = '';
-    });
-}
-
-if (DOM.emergencySend) {
-    DOM.emergencySend.addEventListener('click', () => {
-        const messaggio = DOM.emergencyInput.value.trim();
-        if (messaggio) {
-            aggiungiMessaggioBot(`🚨 **Richiesta di emergenza inviata!**\nUn operatore ti risponderà immediatamente.\n\nMessaggio: "${messaggio}"`);
+    
+    // Tasto Esc per chiudere overlay emergenza
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && DOM.emergencyOverlay && !DOM.emergencyOverlay.hidden) {
             DOM.emergencyOverlay.hidden = true;
-            DOM.emergencyInput.value = '';
+            if (DOM.emergencyInput) DOM.emergencyInput.value = '';
         }
     });
-}
-
-// Dismiss overlay emergenza principale
-if (DOM.dismissEmergency) {
-    DOM.dismissEmergency.addEventListener('click', () => {
-        document.getElementById('emergency-overlay')?.setAttribute('hidden', '');
-    });
-}
-
-// Chip suggerimenti nella sidebar
-document.querySelectorAll('.prompt-chip').forEach(chip => {
-    chip.addEventListener('click', function() {
-        const prompt = this.getAttribute('data-prompt') || this.textContent.trim();
-        DOM.messageInput.value = prompt;
-        DOM.messageInput.style.height = 'auto';
-        DOM.messageInput.style.height = Math.min(DOM.messageInput.scrollHeight, 120) + 'px';
-        DOM.messageInput.focus();
-    });
-});
-
-// Tasto Esc per chiudere overlay
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && DOM.emergencyOverlay && !DOM.emergencyOverlay.hidden) {
-        DOM.emergencyOverlay.hidden = true;
+    
+    // Gestione click su overlay per chiudere (cliccando fuori dalla card)
+    if (DOM.emergencyOverlay) {
+        DOM.emergencyOverlay.addEventListener('click', (e) => {
+            if (e.target === DOM.emergencyOverlay) {
+                DOM.emergencyOverlay.hidden = true;
+                if (DOM.emergencyInput) DOM.emergencyInput.value = '';
+            }
+        });
     }
-});
+}
+
+// ============================================================================
+// ESPONI FUNZIONI GLOBALI
+// ============================================================================
+
+window.scaricaAllegato = scaricaAllegato;
+window.mostraDettaglioCircolare = mostraDettaglioCircolare;
+window.inviaPrompt = inviaPrompt;
 
 // ============================================================================
 // AVVIO APPLICAZIONE
 // ============================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('🚀 EduBot avviato');
+    console.log('🚀 SayHi avviato');
+    setupEventListeners();
     caricaDati();
     
-    // Focus sull'input
-    DOM.messageInput.focus();
+    // Focus sull'input dopo caricamento
+    setTimeout(() => {
+        if (DOM.messageInput) {
+            DOM.messageInput.focus();
+        }
+    }, 500);
 });
 
-// Esponi funzioni globali per onclick negli HTML template
-window.scaricaAllegato = scaricaAllegato;
-window.mostraDettaglioCircolare = mostraDettaglioCircolare;
-window.inviaPrompt = inviaPrompt;
+// ============================================================================
+// FINE SCRIPT
+// ========================================================================
