@@ -334,43 +334,53 @@
         transform: translateY(1px);
     }
     
-    /* Suggerimenti (sopra la textbar) */
-    .suggestions-area {
-        padding: 1rem 1.5rem;
-        background: rgba(10, 25, 41, 0.7);
-        backdrop-filter: blur(20px);
-        border-top: 1px solid rgba(72, 202, 228, 0.15);
-    }
-    
-    .suggestion-chips {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.6rem;
-    }
-    
-    .suggestion-chip {
-        background: rgba(72, 202, 228, 0.1);
-        border: 1px solid rgba(72, 202, 228, 0.3);
-        color: var(--accent-teal);
-        padding: 0.6rem 1.2rem;
-        border-radius: 24px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 0.85rem;
-        font-weight: 500;
-        letter-spacing: 0.2px;
-    }
-    
-    .suggestion-chip:hover {
-        background: rgba(72, 202, 228, 0.25);
-        border-color: var(--accent-teal);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(72, 202, 228, 0.2);
-    }
-    
-    .suggestion-chip:active {
-        transform: translateY(0);
-    }
+/* Suggerimenti (sopra la textbar) */
+.suggestions-area {
+    padding: 0.6rem 1.2rem;
+    background: rgba(10, 25, 41, 0.7);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(72, 202, 228, 0.15);
+}
+
+.suggestion-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.suggestion-chip {
+    background: rgba(72, 202, 228, 0.1);
+    border: 1px solid rgba(72, 202, 228, 0.3);
+    color: var(--accent-teal);
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.1px;
+    white-space: nowrap;
+}
+
+.suggestion-chip:hover {
+    background: rgba(72, 202, 228, 0.25);
+    border-color: var(--accent-teal);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 12px rgba(72, 202, 228, 0.2);
+}
+
+.suggestion-chip:active {
+    transform: translateY(0);
+}
+
+/* Icona lampadina più piccola */
+.suggestions-area .bi-lightbulb {
+    font-size: 0.9rem;
+}
+
+.suggestions-area small {
+    font-size: 0.75rem;
+}
     
     /* Area input */
     .chat-input-area {
