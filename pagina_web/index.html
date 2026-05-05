@@ -65,45 +65,53 @@
     }
     
     .sidebar-header {
-        padding: 1.5rem 1rem;
+        padding: 0.8rem 1rem;
         border-bottom: 1px solid var(--border-color);
         background: linear-gradient(180deg, rgba(26, 115, 232, 0.1) 0%, transparent 100%);
+    }
+
+    .sidebar-header img {
+        height: 60px !important;
+    }
+
+    .sidebar-header span {
+        font-size: 1.2rem;
     }
     
     .user-context {
         background: linear-gradient(135deg, rgba(26, 115, 232, 0.15), rgba(0, 180, 216, 0.15));
         border: 1px solid rgba(72, 202, 228, 0.3);
-        border-radius: 24px;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
+        border-radius: 16px;
+        padding: 0.8rem;
+        margin-bottom: 0;
         backdrop-filter: blur(20px);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         transition: all 0.3s ease;
     }
-    
+
     .user-context:hover {
         border-color: rgba(72, 202, 228, 0.5);
-        box-shadow: 0 12px 40px rgba(0, 180, 216, 0.15);
+        box-shadow: 0 6px 20px rgba(0, 180, 216, 0.15);
     }
-    
+
     .user-avatar {
-        width: 64px;
-        height: 64px;
+        width: 40px;
+        height: 40px;
         background: var(--gradient-avatar);
-        border-radius: 20px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: 700;
-        font-size: 1.5rem;
+        font-size: 1rem;
         color: white;
-        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         transition: all 0.3s ease;
     }
-    
+
     .user-avatar:hover {
         transform: scale(1.05);
-        box-shadow: 0 12px 32px rgba(102, 126, 234, 0.6);
+        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6);
     }
     
     .emergency-btn {
@@ -597,70 +605,743 @@
             transition-duration: 0.01ms !important;
         }
     }
+
+    /* Pannello Impostazioni */
+.settings-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 380px;
+    max-width: 90vw;
+    height: 100vh;
+    background: rgba(10, 25, 41, 0.98);
+    backdrop-filter: blur(30px);
+    border-left: 1px solid var(--border-color);
+    z-index: 1060;
+    display: flex;
+    flex-direction: column;
+    animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+.settings-panel[hidden] {
+    display: none;
+}
+
+.settings-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(180deg, rgba(72, 202, 228, 0.1) 0%, transparent 100%);
+}
+
+.btn-close-settings {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: var(--text-secondary);
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+}
+
+.btn-close-settings:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    transform: rotate(90deg);
+}
+
+.settings-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+}
+
+.settings-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.settings-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.settings-content::-webkit-scrollbar-thumb {
+    background: rgba(72, 202, 228, 0.3);
+    border-radius: 10px;
+}
+
+.settings-section {
+    margin-bottom: 2rem;
+}
+
+.settings-section-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent-teal);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(72, 202, 228, 0.2);
+}
+
+.setting-item {
+    background: rgba(15, 41, 64, 0.5);
+    border: 1px solid rgba(72, 202, 228, 0.1);
+    border-radius: 16px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.setting-item:hover {
+    border-color: rgba(72, 202, 228, 0.3);
+    background: rgba(15, 41, 64, 0.7);
+}
+
+/* Switch personalizzato */
+.form-check-input {
+    width: 3rem !important;
+    height: 1.5rem !important;
+    cursor: pointer;
+    background-color: rgba(72, 202, 228, 0.3) !important;
+    border-color: rgba(72, 202, 228, 0.5) !important;
+}
+
+.form-check-input:checked {
+    background-color: var(--accent-teal) !important;
+    border-color: var(--accent-teal) !important;
+}
+
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.25rem rgba(72, 202, 228, 0.25) !important;
+}
+
+/* Overlay impostazioni */
+.settings-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    z-index: 1055;
+    animation: fadeIn 0.3s ease;
+}
+
+.settings-overlay[hidden] {
+    display: none;
+}
+
+/* Bottoni dimensione testo */
+.btn-outline-info {
+    color: var(--accent-teal);
+    border-color: rgba(72, 202, 228, 0.3);
+}
+
+.btn-outline-info:hover {
+    background: rgba(72, 202, 228, 0.2);
+    border-color: var(--accent-teal);
+    color: white;
+}
+
+/* Responsive pannello impostazioni */
+@media (max-width: 575.98px) {
+    .settings-panel {
+        width: 100vw;
+        max-width: 100vw;
+    }
+    
+    .settings-section {
+        margin-bottom: 1.5rem;
+    }
+    
+    .setting-item {
+        padding: 0.8rem;
+    }
+}
+
+/* Lista Chat nella Sidebar */
+.user-profile-section {
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.5rem !important;
+}
+
+.chat-list-section {
+    min-height: 0;
+}
+
+.chat-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0.5rem;
+}
+
+.chat-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.chat-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chat-list::-webkit-scrollbar-thumb {
+    background: rgba(72, 202, 228, 0.2);
+    border-radius: 10px;
+}
+
+.chat-item {
+    padding: 0.8rem;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    border: 1px solid transparent;
+}
+
+.chat-item:hover {
+    background: rgba(72, 202, 228, 0.1);
+    border-color: rgba(72, 202, 228, 0.2);
+}
+
+.chat-item.active {
+    background: rgba(72, 202, 228, 0.15);
+    border-color: rgba(72, 202, 228, 0.3);
+}
+
+.chat-item-title {
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-item-preview {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chat-item-time {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+.chat-item-actions {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.chat-item:hover .chat-item-actions {
+    opacity: 1;
+}
+
+.chat-delete-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 0.2rem 0.4rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+}
+
+.chat-delete-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.text-accent {
+    color: var(--accent-teal) !important;
+}
+
+.btn-link:hover {
+    background: rgba(72, 202, 228, 0.1);
+    border-radius: 10px;
+}
+
+/* Badge messaggi non letti */
+.chat-badge {
+    background: var(--accent-teal);
+    color: white;
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+/* Stile per la sidebar più compatta su schermi medi */
+@media (max-width: 1200px) {
+    .chat-sidebar {
+        min-width: 280px;
+    }
+}
+
+/* Statistiche nella sidebar */
+.chat-stats {
+    padding: 0.5rem !important;
+    border-top: 1px solid var(--border-color) !important;
+}
+
+.chat-stats .row {
+    margin: 0 -2px;
+}
+
+.chat-stats .col-4 {
+    padding: 0 2px;
+}
+
+.chat-stats .col-4 > div {
+    padding: 0.4rem !important;
+    border-radius: 10px !important;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chat-stats .col-4 > div:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.chat-stats .col-4 > div .small:first-child {
+    font-size: 0.8rem;
+    margin-bottom: 0.1rem;
+}
+
+.chat-stats .col-4 > div .fw-bold {
+    font-size: 0.75rem;
+    margin-bottom: 0;
+}
+
+.chat-stats .col-4 > div small:last-child {
+    font-size: 0.6rem;
+}
+
+/* Pulsante sito web nella sidebar */
+.sidebar-nav {
+    border-top: 1px solid var(--border-color);
+}
+
+.website-btn {
+    background: linear-gradient(135deg, rgba(72, 202, 228, 0.1), rgba(0, 180, 216, 0.1));
+    border: 1px solid rgba(72, 202, 228, 0.25);
+    color: var(--accent-teal);
+    border-radius: 14px;
+    padding: 0.7rem 1rem;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.3px;
+}
+
+.website-btn:hover {
+    background: rgba(72, 202, 228, 0.25);
+    border-color: var(--accent-teal);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(72, 202, 228, 0.2);
+}
+
+.website-btn:active {
+    transform: translateY(0);
+}
+
+.website-btn i {
+    font-size: 1rem;
+}
+
+/* Login Screen */
+.login-screen {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, #0f2940 0%, #0a1929 70%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 1rem;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 440px;
+    animation: slideUpLogin 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideUpLogin {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-card {
+    background: rgba(15, 41, 64, 0.9);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+/* Selettore Ruolo */
+.role-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.role-btn {
+    background: rgba(20, 54, 80, 0.5);
+    border: 1px solid rgba(72, 202, 228, 0.2);
+    color: var(--text-secondary);
+    border-radius: 14px;
+    padding: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.role-btn:hover {
+    background: rgba(72, 202, 228, 0.15);
+    border-color: rgba(72, 202, 228, 0.4);
+    color: white;
+}
+
+.role-btn.active {
+    background: linear-gradient(135deg, rgba(26, 115, 232, 0.3), rgba(0, 180, 216, 0.3));
+    border-color: var(--accent-teal);
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 180, 216, 0.2);
+}
+
+/* Input login */
+.login-card .form-control,
+.login-card .form-select {
+    background: rgba(20, 54, 80, 0.8) !important;
+    border: 1px solid rgba(72, 202, 228, 0.2) !important;
+    color: var(--text-primary) !important;
+    padding: 0.6rem 1rem;
+}
+
+.login-card .form-control:focus,
+.login-card .form-select:focus {
+    border-color: var(--accent-teal) !important;
+    box-shadow: 0 0 0 0.2rem rgba(72, 202, 228, 0.15) !important;
+}
+
+.login-card .input-group-text {
+    background: rgba(20, 54, 80, 0.8) !important;
+    border-color: rgba(72, 202, 228, 0.2) !important;
+    color: var(--text-secondary) !important;
+}
+
+/* Pulsante Accedi */
+.login-btn {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-teal));
+    color: white;
+    border: none;
+    border-radius: 14px;
+    padding: 0.9rem;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(26, 115, 232, 0.3);
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(26, 115, 232, 0.5);
+}
+
+.login-btn:active {
+    transform: translateY(0);
+}
+
+/* Bottoni accesso rapido */
+.quick-login-btn {
+    background: rgba(72, 202, 228, 0.1);
+    border: 1px solid rgba(72, 202, 228, 0.2);
+    color: var(--text-secondary);
+    border-radius: 12px;
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.85rem;
+    text-align: left;
+}
+
+.quick-login-btn:hover {
+    background: rgba(72, 202, 228, 0.2);
+    border-color: var(--accent-teal);
+    color: white;
+    transform: translateX(5px);
+}
+
+/* Stile per il select */
+.login-card select option {
+    background: #0f2940;
+    color: white;
+}
+
+/* Animazione uscita login */
+.login-screen.hidden {
+    animation: fadeOut 0.3s ease forwards;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
 </style>
 </head>
 <body>
-    <div class="app-container d-flex">
-        
-        <!-- Sidebar sinistra - Solo dati utente e emergenza -->
-        <aside class="chat-sidebar col-3 d-none d-lg-flex flex-column" aria-label="Informazioni contestuali">
-            <div class="sidebar-header">
-                <div class="d-flex align-items-center justify-content-center gap-2 mb-3">
-                    <img src="image.svg" alt="Logo Blaise Pascal" style="height: 80px; width: auto; filter: brightness(1.2);">
-                    <span class="fw-bold text-white">I.T.E.T BLAISEPASCAL</span>
-                </div>
+    <!-- Schermata di Login -->
+<div id="login-screen" class="login-screen">
+    <div class="login-container">
+        <div class="login-card">
+            <div class="text-center mb-4">
+                <img src="image.svg" alt="Logo Blaise Pascal" style="height: 70px; width: auto; filter: brightness(1.2); margin-bottom: 1rem;">
+                <h1 class="h3 fw-bold text-white mb-2">SayHi</h1>
+                <p class="text-white-50">Assistente Scolastico Centralizzato</p>
             </div>
             
-            <div class="sidebar-content flex-grow-1 d-flex flex-column justify-content-center p-4">
-                <!-- Profilo utente -->
-                <div class="user-context">
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <div class="user-avatar" aria-hidden="true">MR</div>
-                        <div>
-                            <h2 class="h5 mb-0 text-white fw-bold">Mario Rossi</h2>
-                            <span class="small text-white-50">Docente - 3B</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Statistiche rapide -->
-                    <div class="row g-2 mt-3">
-                        <div class="col-4">
-                            <div class="text-center p-2 rounded-3" style="background: rgba(255,255,255,0.1);">
-                                <div class="fs-5">📋</div>
-                                <div class="fw-bold text-white" id="unread-count">0</div>
-                                <small class="text-white-50">Circolari</small>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="text-center p-2 rounded-3" style="background: rgba(255,255,255,0.1);">
-                                <div class="fs-5">✍️</div>
-                                <div class="fw-bold text-white" id="pending-tasks">0</div>
-                                <small class="text-white-50">Moduli</small>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="text-center p-2 rounded-3" style="background: rgba(255,255,255,0.1);">
-                                <div class="fs-5">📅</div>
-                                <div class="fw-bold text-white" id="today-events">0</div>
-                                <small class="text-white-50">Eventi</small>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Data corrente -->
-                    <div class="text-center mt-3">
-                        <small class="text-white-50" id="current-date-display"></small>
+            <form id="login-form" autocomplete="off">
+                <!-- Selezione Ruolo -->
+                <div class="mb-4">
+                    <label class="text-white-50 small mb-2 d-block">Accedi come:</label>
+                    <div class="role-selector">
+                        <button type="button" class="role-btn active" data-role="docente">
+                            <i class="bi bi-person-workspace fs-4 d-block mb-1"></i>
+                            <span>Docente</span>
+                        </button>
+                        <button type="button" class="role-btn" data-role="studente">
+                            <i class="bi bi-mortarboard fs-4 d-block mb-1"></i>
+                            <span>Studente</span>
+                        </button>
+                        <button type="button" class="role-btn" data-role="genitore">
+                            <i class="bi bi-people fs-4 d-block mb-1"></i>
+                            <span>Genitore</span>
+                        </button>
+                        <button type="button" class="role-btn" data-role="ata">
+                            <i class="bi bi-building fs-4 d-block mb-1"></i>
+                            <span>ATA</span>
+                        </button>
                     </div>
                 </div>
-            </div>
-            
-            <div class="sidebar-footer p-3">
-                <button class="emergency-btn w-100 d-flex align-items-center justify-content-center gap-2" id="emergency-trigger" aria-label="Emergenza">
-                    <i class="bi bi-exclamation-triangle-fill fs-5"></i>
-                    <span class="fs-6">Emergenza</span>
+                
+                <!-- Nome utente -->
+                <div class="mb-3">
+                    <label for="login-nome" class="form-label text-white-50 small">Nome</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-secondary text-white-50">
+                            <i class="bi bi-person"></i>
+                        </span>
+                        <input type="text" class="form-control bg-dark text-white border-secondary" id="login-nome" placeholder="Mario" required>
+                    </div>
+                </div>
+                
+                <!-- Cognome -->
+                <div class="mb-3">
+                    <label for="login-cognome" class="form-label text-white-50 small">Cognome</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-secondary text-white-50">
+                            <i class="bi bi-person-badge"></i>
+                        </span>
+                        <input type="text" class="form-control bg-dark text-white border-secondary" id="login-cognome" placeholder="Rossi" required>
+                    </div>
+                </div>
+                
+                <!-- Classe (per studenti e docenti) -->
+                <div class="mb-3" id="classe-field">
+                    <label for="login-classe" class="form-label text-white-50 small">Classe</label>
+                    <select class="form-select bg-dark text-white border-secondary" id="login-classe">
+                        <option value="">Seleziona classe...</option>
+                        <option value="1A">1A</option>
+                        <option value="1B">1B</option>
+                        <option value="2A">2A</option>
+                        <option value="2B">2B</option>
+                        <option value="3A">3A</option>
+                        <option value="3B">3B</option>
+                        <option value="4A">4A</option>
+                        <option value="4B">4B</option>
+                        <option value="5A">5A</option>
+                        <option value="5B">5B</option>
+                    </select>
+                </div>
+                
+                <!-- Password (per dirigente/preside) -->
+                <div class="mb-4" id="password-field" hidden>
+                    <label for="login-password" class="form-label text-white-50 small">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-secondary text-white-50">
+                            <i class="bi bi-lock"></i>
+                        </span>
+                        <input type="password" class="form-control bg-dark text-white border-secondary" id="login-password" placeholder="••••••••">
+                    </div>
+                </div>
+                
+                <!-- Ricordami -->
+                <div class="form-check mb-4">
+                    <input class="form-check-input" type="checkbox" id="remember-me" checked>
+                    <label class="form-check-label text-white-50 small" for="remember-me">
+                        Ricordami su questo dispositivo
+                    </label>
+                </div>
+                
+                <!-- Pulsante Accedi -->
+                <button type="submit" class="login-btn w-100">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>
+                    Accedi
                 </button>
+            </form>
+            
+            <!-- Login rapidi (demo) -->
+            <div class="mt-4 pt-3 border-top" style="border-color: var(--border-color) !important;">
+                <p class="text-white-50 small text-center mb-3">Accessi rapidi (demo):</p>
+                <div class="d-grid gap-2">
+                    <button class="quick-login-btn" data-nome="Mario" data-cognome="Rossi" data-ruolo="docente" data-classe="3B">
+                        <i class="bi bi-person-check me-2"></i>Mario Rossi - Docente 3B
+                    </button>
+                    <button class="quick-login-btn" data-nome="Anna" data-cognome="Bianchi" data-ruolo="studente" data-classe="3B">
+                        <i class="bi bi-mortarboard me-2"></i>Anna Bianchi - Studentessa 3B
+                    </button>
+                    <button class="quick-login-btn" data-nome="Pietro" data-cognome="Neri" data-ruolo="genitore" data-classe="3B">
+                        <i class="bi bi-people me-2"></i>Pietro Neri - Genitore 3B
+                    </button>
+                </div>
             </div>
-        </aside>
+        </div>
+    </div>
+</div>
+
+<!-- Overlay app principale (nascosto fino al login) -->
+<div id="app-overlay" class="app-overlay" hidden>
+
+</div>
+    <div class="app-container d-flex">
+        <!-- Sidebar sinistra - Dati utente, lista chat e emergenza -->
+<aside class="chat-sidebar col-3 d-none d-lg-flex flex-column" aria-label="Informazioni contestuali">
+    <div class="sidebar-header">
+        <div class="d-flex align-items-center justify-content-center gap-2 mb-3">
+            <img src="image.svg" alt="Logo Blaise Pascal" style="height: 60px; width: auto; filter: brightness(1.2);">
+            <span class="fw-bold text-white">I.T.E.T BLAISE PASCAL</span>
+        </div>
+    </div>
+    
+    <!-- Profilo utente -->
+    <div class="user-profile-section p-3">
+        <div class="user-context">
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="user-avatar" aria-hidden="true">MR</div>
+                <div>
+                    <h2 class="h6 mb-0 text-white fw-bold">Mario Rossi</h2>
+                    <span class="small text-white-50">Docente - 3B</span>
+                </div>
+            </div>
+            
+            <!-- Data corrente -->
+            <div class="text-center">
+                <small class="text-white-50" id="current-date-display"></small>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Lista chat -->
+    <div class="chat-list-section flex-grow-1 d-flex flex-column">
+        <div class="d-flex justify-content-between align-items-center px-3 py-2">
+            <h3 class="text-white-50 small fw-semibold mb-0 text-uppercase">Conversazioni</h3>
+            <button class="btn btn-link text-accent p-1" id="new-chat-btn" aria-label="Nuova chat" title="Nuova chat">
+                <i class="bi bi-plus-square fs-5"></i>
+            </button>
+        </div>
+        
+        <!-- Lista delle chat salvate -->
+        <div class="chat-list flex-grow-1 overflow-auto" id="chat-list">
+            <!-- Le chat verranno caricate qui dinamicamente -->
+            <div class="text-center text-white-50 small p-3" id="no-chats-message">
+                <i class="bi bi-chat-dots fs-4 d-block mb-2"></i>
+                Nessuna conversazione
+            </div>
+        </div>
+        
+        <!-- Statistiche rapide -->
+        <div class="chat-stats px-3 py-2 border-top" style="border-color: var(--border-color) !important;">
+            <div class="row g-2">
+                <div class="col-4">
+                    <div class="text-center p-2 rounded-3" style="background: rgba(255,255,255,0.1);">
+                        <div class="small">📋</div>
+                        <div class="fw-bold text-white small" id="unread-count">0</div>
+                        <small class="text-white-50" style="font-size: 0.65rem;">Circolari</small>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="text-center p-2 rounded-3" style="background: rgba(255,255,255,0.1);">
+                        <div class="small">✍️</div>
+                        <div class="fw-bold text-white small" id="pending-tasks">0</div>
+                        <small class="text-white-50" style="font-size: 0.65rem;">Moduli</small>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="text-center p-2 rounded-3" style="background: rgba(255,255,255,0.1);">
+                        <div class="small">📅</div>
+                        <div class="fw-bold text-white small" id="today-events">0</div>
+                        <small class="text-white-50" style="font-size: 0.65rem;">Eventi</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Pulsante sito web -->
+    <div class="sidebar-nav px-3 py-2">
+        <a href="https://webmyschool.it/" target="_blank" class="website-btn w-100 d-flex align-items-center justify-content-center gap-2">
+            <i class="bi bi-globe2"></i>
+            <span>ORARIO CLASSI</span>
+        </a>
+    </div>
+    
+    <div class="sidebar-footer p-3">
+        <button class="emergency-btn w-100 d-flex align-items-center justify-content-center gap-2" id="emergency-trigger" aria-label="Emergenza">
+            <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+            <span class="fs-6">Emergenza</span>
+        </button>
+    </div>
+</aside>
         
         <!-- Area principale chat -->
         <main class="chat-main col-12 col-lg-9 d-flex flex-column">
@@ -680,12 +1361,6 @@
                     </div>
                 </div>
                 <div class="d-flex gap-1">
-                    <button class="btn btn-link text-white-50 p-2 rounded-circle" aria-label="Cerca">
-                        <i class="bi bi-search"></i>
-                    </button>
-                    <button class="btn btn-link text-white-50 p-2 rounded-circle" aria-label="Nuova chat">
-                        <i class="bi bi-pencil-square"></i>
-                    </button>
                     <button class="btn btn-link text-white-50 p-2 rounded-circle" aria-label="Impostazioni">
                         <i class="bi bi-gear"></i>
                     </button>
@@ -766,6 +1441,134 @@
             </footer>
         </main>
     </div>
+
+    <!-- Pannello Impostazioni -->
+<div id="settings-panel" class="settings-panel" aria-label="Impostazioni" hidden>
+    <div class="settings-header">
+        <h3 class="fs-5 fw-bold text-white mb-0">
+            <i class="bi bi-gear me-2"></i>Impostazioni
+        </h3>
+        <button class="btn-close-settings" id="close-settings" aria-label="Chiudi impostazioni">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+    
+    <div class="settings-content">
+        <!-- Tema -->
+        <div class="settings-section">
+            <h4 class="settings-section-title">
+                <i class="bi bi-palette me-2"></i>Aspetto
+            </h4>
+            <div class="setting-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <label class="text-white fw-medium">Tema scuro</label>
+                        <p class="text-white-50 small mb-0">Attiva/disattiva il tema scuro</p>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="dark-mode-toggle" checked>
+                    </div>
+                </div>
+            </div>
+            <div class="setting-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <label class="text-white fw-medium">Dimensione testo</label>
+                        <p class="text-white-50 small mb-0">Regola la dimensione del testo</p>
+                    </div>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-info btn-sm" id="font-size-down" aria-label="Riduci testo">A-</button>
+                        <button class="btn btn-outline-info btn-sm" id="font-size-reset" aria-label="Testo normale">A</button>
+                        <button class="btn btn-outline-info btn-sm" id="font-size-up" aria-label="Aumenta testo">A+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Notifiche -->
+        <div class="settings-section">
+            <h4 class="settings-section-title">
+                <i class="bi bi-bell me-2"></i>Notifiche
+            </h4>
+            <div class="setting-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <label class="text-white fw-medium">Notifiche circolari</label>
+                        <p class="text-white-50 small mb-0">Ricevi notifiche per nuove circolari</p>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="notify-circolari" checked>
+                    </div>
+                </div>
+            </div>
+            <div class="setting-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <label class="text-white fw-medium">Notifiche scadenze</label>
+                        <p class="text-white-50 small mb-0">Avvisi per scadenze imminenti</p>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="notify-scadenze" checked>
+                    </div>
+                </div>
+            </div>
+            <div class="setting-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <label class="text-white fw-medium">Notifiche eventi</label>
+                        <p class="text-white-50 small mb-0">Promemoria per eventi e riunioni</p>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="notify-eventi" checked>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Privacy -->
+        <div class="settings-section">
+            <h4 class="settings-section-title">
+                <i class="bi bi-shield-check me-2"></i>Privacy e Dati
+            </h4>
+            <div class="setting-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <label class="text-white fw-medium">Salva cronologia</label>
+                        <p class="text-white-50 small mb-0">Memorizza la cronologia delle chat</p>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="save-history" checked>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="setting-item">
+    <button class="btn btn-outline-danger btn-sm w-100" id="logout-btn">
+        <i class="bi bi-box-arrow-right me-2"></i>Esci / Cambia utente
+    </button>
+</div>
+        
+        <!-- Info -->
+        <div class="settings-section">
+            <h4 class="settings-section-title">
+                <i class="bi bi-info-circle me-2"></i>Informazioni
+            </h4>
+            <div class="setting-item">
+                <p class="text-white-50 small mb-1">SayHi v1.0.0</p>
+                <p class="text-white-50 small mb-0">Assistente Scolastico Centralizzato</p>
+                <p class="text-white-50 small mb-0">© 2026 I.T.E.T Blaise Pascal</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="setting-item">
+    <button class="btn btn-outline-danger btn-sm w-100" id="logout-btn">
+        <i class="bi bi-box-arrow-right me-2"></i>Esci / Cambia utente
+    </button>
+</div>
+
+<!-- Overlay per chiudere le impostazioni cliccando fuori -->
+<div id="settings-overlay" class="settings-overlay" hidden></div>
 
     <!-- Overlay emergenza -->
     <div id="emergency-overlay" class="emergency-overlay" hidden>

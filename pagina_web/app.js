@@ -35,6 +35,344 @@ const AppState = {
 };
 
 // ============================================================================
+// SISTEMA CHAT MULTIPLE - GESTIONE CONVERSAZIONI
+// ============================================================================
+
+const ChatManager = {
+    chats: {},           // Oggetto con tutte le chat: { id: { nome, messaggi, dataCreazione, ... } }
+    chatAttiva: null,    // ID della chat attualmente aperta
+    CHIAVE_STORAGE: 'sayhi-chats',
+    
+    // Inizializza il sistema chat
+    init() {
+        this.caricaChats();
+        if (Object.keys(this.chats).length === 0) {
+            this.creaNuovaChat('Chat Principale');
+        } else {
+            // Apri l'ultima chat attiva o la prima disponibile
+            const ultimaAttiva = localStorage.getItem('sayhi-active-chat');
+            if (ultimaAttiva && this.chats[ultimaAttiva]) {
+                this.apriChat(ultimaAttiva);
+            } else {
+                const primaChat = Object.keys(this.chats)[0];
+                this.apriChat(primaChat);
+            }
+        }
+        this.renderizzaListaChat();
+    },
+    
+    // Carica tutte le chat dal localStorage
+    caricaChats() {
+        try {
+            const salvate = localStorage.getItem(this.CHIAVE_STORAGE);
+            if (salvate) {
+                this.chats = JSON.parse(salvate);
+            }
+        } catch (e) {
+            console.error('Errore caricamento chats:', e);
+            this.chats = {};
+        }
+    },
+    
+    // Salva tutte le chat nel localStorage
+    salvaChats() {
+        try {
+            localStorage.setItem(this.CHIAVE_STORAGE, JSON.stringify(this.chats));
+        } catch (e) {
+            console.error('Errore salvataggio chats:', e);
+            // Se lo storage è pieno, prova a rimuovere le chat più vecchie
+            if (e.name === 'QuotaExceededError') {
+                this.pulisciChatVecchie();
+                try {
+                    localStorage.setItem(this.CHIAVE_STORAGE, JSON.stringify(this.chats));
+                } catch (e2) {
+                    console.error('Impossibile salvare anche dopo pulizia');
+                }
+            }
+        }
+    },
+    
+    // Crea una nuova chat
+    creaNuovaChat(nome = null) {
+        const id = 'chat_' + Date.now();
+        const nomeChat = nome || `Chat ${Object.keys(this.chats).length + 1}`;
+        
+        this.chats[id] = {
+            id: id,
+            nome: nomeChat,
+            messaggi: [],
+            dataCreazione: new Date().toISOString(),
+            ultimoAccesso: new Date().toISOString(),
+            nonLetti: 0
+        };
+        
+        this.salvaChats();
+        this.apriChat(id);
+        this.renderizzaListaChat();
+        
+        return id;
+    },
+    
+    // Elimina una chat
+    eliminaChat(id) {
+        if (Object.keys(this.chats).length <= 1) {
+            // Non eliminare l'ultima chat
+            this.chats[id].messaggi = [];
+            this.salvaChats();
+            
+            // Pulisci interfaccia
+            if (DOM.chatMessages) {
+                DOM.chatMessages.innerHTML = '';
+            }
+            AppState.conversazione = [];
+            
+            aggiungiMessaggioBot('🗑️ Chat ripulita! Puoi continuare a usarla.');
+            return;
+        }
+        
+        delete this.chats[id];
+        this.salvaChats();
+        
+        // Se stiamo eliminando la chat attiva, apri un'altra chat
+        if (this.chatAttiva === id) {
+            const prossimaChat = Object.keys(this.chats)[0];
+            if (prossimaChat) {
+                this.apriChat(prossimaChat);
+            }
+        }
+        
+        this.renderizzaListaChat();
+    },
+    
+    // Apri una chat esistente
+    apriChat(id) {
+        if (!this.chats[id]) return;
+        
+        // Salva la chat corrente prima di cambiare
+        if (this.chatAttiva && this.chats[this.chatAttiva]) {
+            this.chats[this.chatAttiva].messaggi = [...AppState.conversazione];
+            this.salvaChats();
+        }
+        
+        this.chatAttiva = id;
+        localStorage.setItem('sayhi-active-chat', id);
+        
+        // Aggiorna ultimo accesso e resetta non letti
+        this.chats[id].ultimoAccesso = new Date().toISOString();
+        this.chats[id].nonLetti = 0;
+        
+        // Carica i messaggi di questa chat
+        this.caricaMessaggiChat(id);
+        
+        // Aggiorna UI
+        this.renderizzaListaChat();
+        this.salvaChats();
+    },
+    
+    // Carica i messaggi di una chat nell'interfaccia
+    caricaMessaggiChat(id) {
+        if (!DOM.chatMessages) return;
+        
+        // Pulisci l'area messaggi
+        DOM.chatMessages.innerHTML = '';
+        
+        const chat = this.chats[id];
+        if (!chat || !chat.messaggi) {
+            // Mostra messaggio di benvenuto per chat vuota
+            AppState.conversazione = [];
+            const nomeChat = chat ? chat.nome : 'Chat';
+            
+            const messaggioHTML = `
+                <div class="message message-bot">
+                    <div class="message-avatar" aria-hidden="true">
+                        <i class="bi bi-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            <p class="mb-2">📝 Questa è la chat: <strong>${escapeHTML(nomeChat)}</strong></p>
+                            <p class="mb-0">Cosa posso fare per te?</p>
+                        </div>
+                        <span class="message-time">${new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                </div>
+            `;
+            DOM.chatMessages.innerHTML = messaggioHTML;
+            return;
+        }
+        
+        // Ripristina i messaggi
+        AppState.conversazione = [...chat.messaggi];
+        
+        chat.messaggi.forEach(msg => {
+            if (msg.tipo === 'utente') {
+                aggiungiMessaggioUtenteSenzaSalvare(msg.testo, msg.ora);
+            } else if (msg.tipo === 'bot') {
+                aggiungiMessaggioBotSenzaSalvare(msg.testo, msg.ora);
+            }
+        });
+        
+        scrollaInFondo();
+    },
+    
+    // Aggiungi messaggio alla chat attiva
+    aggiungiMessaggio(tipo, testo) {
+        if (!this.chatAttiva || !this.chats[this.chatAttiva]) return;
+        
+        const ora = new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+        const messaggio = { tipo, testo, ora };
+        
+        this.chats[this.chatAttiva].messaggi.push(messaggio);
+        AppState.conversazione.push(messaggio);
+        
+        // Limita a 1000 messaggi per chat
+        if (this.chats[this.chatAttiva].messaggi.length > 1000) {
+            this.chats[this.chatAttiva].messaggi = this.chats[this.chatAttiva].messaggi.slice(-500);
+        }
+        
+        this.salvaChats();
+        this.renderizzaListaChat();
+    },
+    
+    // Renderizza la lista delle chat nella sidebar
+    renderizzaListaChat() {
+        const chatList = document.getElementById('chat-list');
+        const noChatsMessage = document.getElementById('no-chats-message');
+        if (!chatList) return;
+        
+        // Ordina le chat per ultimo accesso (più recenti prima)
+        const chatsOrdinate = Object.values(this.chats)
+            .sort((a, b) => new Date(b.ultimoAccesso) - new Date(a.ultimoAccesso));
+        
+        if (chatsOrdinate.length === 0) {
+            chatList.innerHTML = '';
+            if (noChatsMessage) noChatsMessage.style.display = 'block';
+            return;
+        }
+        
+        if (noChatsMessage) noChatsMessage.style.display = 'none';
+        
+        chatList.innerHTML = chatsOrdinate.map(chat => {
+            const isActive = chat.id === this.chatAttiva;
+            const ultimoMsg = chat.messaggi && chat.messaggi.length > 0 
+                ? chat.messaggi[chat.messaggi.length - 1] 
+                : null;
+            const preview = ultimoMsg 
+                ? ultimoMsg.testo.substring(0, 40) + (ultimoMsg.testo.length > 40 ? '...' : '')
+                : 'Nessun messaggio';
+            const oraUltimoMsg = ultimoMsg ? ultimoMsg.ora : '';
+            
+            return `
+                <div class="chat-item ${isActive ? 'active' : ''}" 
+                     data-chat-id="${chat.id}"
+                     onclick="ChatManager.apriChat('${chat.id}')">
+                    <div class="chat-item-title">
+                        <span>💬 ${escapeHTML(chat.nome)}</span>
+                        <div class="chat-item-actions">
+                            <button class="chat-delete-btn" 
+                                    onclick="event.stopPropagation(); ChatManager.eliminaChat('${chat.id}')"
+                                    title="Elimina chat">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="chat-item-preview">${escapeHTML(preview)}</div>
+                        <div class="d-flex align-items-center gap-1">
+                            ${chat.nonLetti > 0 ? `<span class="chat-badge">${chat.nonLetti}</span>` : ''}
+                            <span class="chat-item-time">${oraUltimoMsg}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    },
+    
+    // Rinomina una chat
+    rinominaChat(id, nuovoNome) {
+        if (this.chats[id]) {
+            this.chats[id].nome = nuovoNome;
+            this.salvaChats();
+            this.renderizzaListaChat();
+        }
+    },
+    
+    // Pulisci chat vecchie in caso di storage pieno
+    pulisciChatVecchie() {
+        const chatsOrdinate = Object.values(this.chats)
+            .sort((a, b) => new Date(a.ultimoAccesso) - new Date(b.ultimoAccesso));
+        
+        // Mantieni solo le 10 chat più recenti
+        if (chatsOrdinate.length > 10) {
+            const daEliminare = chatsOrdinate.slice(0, chatsOrdinate.length - 10);
+            daEliminare.forEach(chat => {
+                delete this.chats[chat.id];
+            });
+        }
+    }
+};
+
+// ============================================================================
+// FUNZIONI MODIFICATE PER SUPPORTARE CHAT MULTIPLE
+// ============================================================================
+
+// Sovrascrivi le funzioni originali
+const aggiungiMessaggioUtenteOriginale = aggiungiMessaggioUtente;
+aggiungiMessaggioUtente = function(testo) {
+    aggiungiMessaggioUtenteOriginale(testo);
+    ChatManager.aggiungiMessaggio('utente', testo);
+};
+
+const aggiungiMessaggioBotOriginale = aggiungiMessaggioBot;
+aggiungiMessaggioBot = function(testo) {
+    aggiungiMessaggioBotOriginale(testo);
+    ChatManager.aggiungiMessaggio('bot', testo);
+};
+
+// Funzioni helper per il caricamento (già definite ma le richiamo per sicurezza)
+function aggiungiMessaggioUtenteSenzaSalvare(testo, ora) {
+    const oraMsg = ora || new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+    
+    const messaggioHTML = `
+        <div class="message message-user">
+            <div class="message-content">
+                <div class="message-bubble">
+                    <p class="mb-0">${escapeHTML(testo)}</p>
+                </div>
+                <span class="message-time">${oraMsg}</span>
+            </div>
+        </div>
+    `;
+    
+    DOM.chatMessages.insertAdjacentHTML('beforeend', messaggioHTML);
+    scrollaInFondo();
+}
+
+function aggiungiMessaggioBotSenzaSalvare(testo, ora) {
+    const oraMsg = ora || new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+    
+    const testoFormattato = escapeHTML(testo)
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>');
+    
+    const messaggioHTML = `
+        <div class="message message-bot">
+            <div class="message-avatar" aria-hidden="true">
+                <i class="bi bi-robot"></i>
+            </div>
+            <div class="message-content">
+                <div class="message-bubble">
+                    <p class="mb-0">${testoFormattato}</p>
+                </div>
+                <span class="message-time">${oraMsg}</span>
+            </div>
+        </div>
+    `;
+    
+    DOM.chatMessages.insertAdjacentHTML('beforeend', messaggioHTML);
+    scrollaInFondo();
+}
+
+// ============================================================================
 // RIFERIMENTI DOM
 // ============================================================================
 
@@ -113,6 +451,12 @@ function inizializzaInterfaccia() {
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         const oggiFormattato = new Date().toLocaleDateString('it-IT', options);
         DOM.currentDateDisplay.textContent = capitalize(oggiFormattato);
+    }
+    
+    // ⬇️ SOSTITUISCI caricaChatSalvata() con questo ⬇️
+    // Inizializza il sistema di chat multiple
+    if (!ChatManager.chatAttiva) {
+        ChatManager.init();
     }
 }
 
@@ -908,6 +1252,97 @@ function setupEventListeners() {
             }
         });
     }
+
+    setupSettingsListeners();
+const newChatBtn = document.getElementById('new-chat-btn');
+if (newChatBtn) {
+    newChatBtn.addEventListener('click', () => {
+        const nome = prompt('Nome della nuova chat:', `Chat ${Object.keys(ChatManager.chats).length + 1}`);
+        if (nome && nome.trim()) {
+            ChatManager.creaNuovaChat(nome.trim());
+            aggiungiMessaggioBot(`✅ Nuova chat "${nome.trim()}" creata! Come posso aiutarti?`);
+        }
+    });
+}
+
+// Dentro setupEventListeners(), aggiungi:
+
+// Gestione form login
+const loginForm = document.getElementById('login-form');
+if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const nome = document.getElementById('login-nome').value.trim();
+        const cognome = document.getElementById('login-cognome').value.trim();
+        const classe = document.getElementById('login-classe').value;
+        const remember = document.getElementById('remember-me').checked;
+        
+        // Trova il ruolo selezionato
+        const ruoloAttivo = document.querySelector('.role-btn.active');
+        const ruolo = ruoloAttivo ? ruoloAttivo.getAttribute('data-role') : 'docente';
+        
+        if (!nome || !cognome) {
+            alert('Inserisci nome e cognome');
+            return;
+        }
+        
+        LoginSystem.login(nome, cognome, ruolo, classe, remember);
+    });
+}
+
+// Gestione bottoni ruolo
+document.querySelectorAll('.role-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        const ruolo = this.getAttribute('data-role');
+        const classeField = document.getElementById('classe-field');
+        const passwordField = document.getElementById('password-field');
+        
+        // Mostra/nascondi campi in base al ruolo
+        if (classeField) {
+            classeField.hidden = (ruolo === 'ata');
+        }
+        if (passwordField) {
+            passwordField.hidden = true; // Per ora sempre nascosto
+        }
+    });
+});
+
+// Gestione accessi rapidi
+document.querySelectorAll('.quick-login-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const nome = this.getAttribute('data-nome');
+        const cognome = this.getAttribute('data-cognome');
+        const ruolo = this.getAttribute('data-ruolo');
+        const classe = this.getAttribute('data-classe');
+        
+        // Compila il form
+        document.getElementById('login-nome').value = nome;
+        document.getElementById('login-cognome').value = cognome;
+        if (classe) document.getElementById('login-classe').value = classe;
+        
+        // Seleziona il ruolo
+        document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+        const ruoloBtn = document.querySelector(`.role-btn[data-role="${ruolo}"]`);
+        if (ruoloBtn) ruoloBtn.classList.add('active');
+        
+        // Login automatico
+        LoginSystem.login(nome, cognome, ruolo, classe, true);
+    });
+});
+
+// Pulsante logout (aggiungilo nel pannello impostazioni)
+const logoutBtn = document.getElementById('logout-btn');
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+        if (confirm('Sei sicuro di voler uscire?')) {
+            LoginSystem.logout();
+        }
+    });
+}
 }
 
 // ============================================================================
@@ -919,21 +1354,339 @@ window.mostraDettaglioCircolare = mostraDettaglioCircolare;
 window.inviaPrompt = inviaPrompt;
 
 // ============================================================================
+// SISTEMA DI LOGIN
+// ============================================================================
+
+const LoginSystem = {
+    utenteCorrente: null,
+    CHIAVE_UTENTE: 'sayhi-current-user',
+    
+    init() {
+        // Controlla se c'è un utente salvato
+        const salvato = localStorage.getItem(this.CHIAVE_UTENTE);
+        const rememberMe = localStorage.getItem('sayhi-remember-me') === 'true';
+        
+        if (salvato && rememberMe) {
+            try {
+                this.utenteCorrente = JSON.parse(salvato);
+                this.mostraApp();
+                return true;
+            } catch (e) {
+                console.warn('Dati utente corrotti, richiesto nuovo login');
+            }
+        }
+        
+        this.mostraLogin();
+        return false;
+    },
+    
+    login(nome, cognome, ruolo, classe, remember) {
+        // Crea profilo utente
+        this.utenteCorrente = {
+            nome: nome,
+            cognome: cognome,
+            ruolo: ruolo,
+            classe: classe || null,
+            iniziali: (nome[0] + cognome[0]).toUpperCase(),
+            dataLogin: new Date().toISOString()
+        };
+        
+        // Salva se richiesto
+        if (remember) {
+            localStorage.setItem(this.CHIAVE_UTENTE, JSON.stringify(this.utenteCorrente));
+            localStorage.setItem('sayhi-remember-me', 'true');
+        } else {
+            localStorage.removeItem(this.CHIAVE_UTENTE);
+            localStorage.setItem('sayhi-remember-me', 'false');
+        }
+        
+        // Aggiorna UI e mostra app
+        this.aggiornaUIUtente();
+        this.mostraApp();
+        
+        // Messaggio di benvenuto personalizzato
+        setTimeout(() => {
+            const saluto = this.getSaluto();
+            aggiungiMessaggioBot(`${saluto} ${nome}! 👋 Sono SayHi, il tuo assistente scolastico. Come posso aiutarti?`);
+        }, 500);
+    },
+    
+    logout() {
+        this.utenteCorrente = null;
+        localStorage.removeItem(this.CHIAVE_UTENTE);
+        localStorage.setItem('sayhi-remember-me', 'false');
+        
+        // Reset app
+        if (DOM.chatMessages) DOM.chatMessages.innerHTML = '';
+        AppState.conversazione = [];
+        
+        this.mostraLogin();
+    },
+    
+    aggiornaUIUtente() {
+        if (!this.utenteCorrente) return;
+        
+        const u = this.utenteCorrente;
+        
+        // Aggiorna nome e ruolo nella sidebar
+        const userNameEl = document.querySelector('.user-context h2, .user-context .h6');
+        const userRoleEl = document.querySelector('.user-context span.small');
+        const userAvatarEl = document.querySelector('.user-avatar');
+        
+        if (userNameEl) {
+            userNameEl.textContent = `${u.nome} ${u.cognome}`;
+        }
+        if (userRoleEl) {
+            const ruoloTesto = u.ruolo === 'docente' ? 'Docente' :
+                              u.ruolo === 'studente' ? 'Studente' :
+                              u.ruolo === 'genitore' ? 'Genitore' : 'ATA';
+            userRoleEl.textContent = u.classe ? `${ruoloTesto} - ${u.classe}` : ruoloTesto;
+        }
+        if (userAvatarEl) {
+            userAvatarEl.textContent = u.iniziali;
+        }
+        
+        // Aggiorna contesto app
+        AppState.contesto.ruolo = u.ruolo;
+        AppState.contesto.classe = u.classe || '';
+        AppState.contesto.nome = u.nome;
+    },
+    
+    getSaluto() {
+        const ora = new Date().getHours();
+        if (ora < 12) return 'Buongiorno';
+        if (ora < 18) return 'Buon pomeriggio';
+        return 'Buonasera';
+    },
+    
+    mostraLogin() {
+        const loginScreen = document.getElementById('login-screen');
+        const appOverlay = document.getElementById('app-overlay');
+        
+        if (loginScreen) loginScreen.style.display = 'flex';
+        if (appOverlay) appOverlay.hidden = true;
+    },
+    
+    mostraApp() {
+        const loginScreen = document.getElementById('login-screen');
+        const appOverlay = document.getElementById('app-overlay');
+        
+        if (loginScreen) {
+            loginScreen.classList.add('hidden');
+            setTimeout(() => {
+                loginScreen.style.display = 'none';
+                loginScreen.classList.remove('hidden');
+            }, 300);
+        }
+        if (appOverlay) appOverlay.hidden = false;
+    }
+};
+
+// ============================================================================
 // AVVIO APPLICAZIONE
 // ============================================================================
 
+// Sostituisci il DOMContentLoaded attuale con questo:
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 SayHi avviato');
     setupEventListeners();
-    caricaDati();
     
-    // Focus sull'input dopo caricamento
-    setTimeout(() => {
-        if (DOM.messageInput) {
-            DOM.messageInput.focus();
-        }
-    }, 500);
+    // Avvia sistema login
+    const isLoggedIn = LoginSystem.init();
+    
+    if (isLoggedIn) {
+        // Se già loggato, carica dati e chat
+        caricaDati();
+        setTimeout(() => {
+            if (DOM.messageInput) DOM.messageInput.focus();
+        }, 500);
+    }
 });
+
+// Modifica la funzione di login per caricare i dati dopo il login
+const loginOriginale = LoginSystem.login;
+LoginSystem.login = function(nome, cognome, ruolo, classe, remember) {
+    loginOriginale.call(this, nome, cognome, ruolo, classe, remember);
+    // Carica i dati dopo il login
+    if (!AppState.dati) {
+        caricaDati();
+    }
+    if (!ChatManager.chatAttiva) {
+        ChatManager.init();
+    }
+};
+
+// ============================================================================
+// GESTIONE IMPOSTAZIONI
+// ============================================================================
+
+const SettingsDOM = {
+    panel: document.getElementById('settings-panel'),
+    overlay: document.getElementById('settings-overlay'),
+    closeBtn: document.getElementById('close-settings'),
+    darkModeToggle: document.getElementById('dark-mode-toggle'),
+    fontSizeUp: document.getElementById('font-size-up'),
+    fontSizeDown: document.getElementById('font-size-down'),
+    fontSizeReset: document.getElementById('font-size-reset'),
+    notifyCircolari: document.getElementById('notify-circolari'),
+    notifyScadenze: document.getElementById('notify-scadenze'),
+    notifyEventi: document.getElementById('notify-eventi'),
+    saveHistory: document.getElementById('save-history'),
+    clearHistory: document.getElementById('clear-history')
+};
+
+function apriImpostazioni() {
+    if (SettingsDOM.panel) SettingsDOM.panel.hidden = false;
+    if (SettingsDOM.overlay) SettingsDOM.overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+}
+
+function chiudiImpostazioni() {
+    if (SettingsDOM.panel) SettingsDOM.panel.hidden = true;
+    if (SettingsDOM.overlay) SettingsDOM.overlay.hidden = true;
+    document.body.style.overflow = '';
+}
+
+function setupSettingsListeners() {
+    // Apertura impostazioni
+    const settingsTrigger = document.querySelector('[aria-label="Impostazioni"]');
+    if (settingsTrigger) {
+        settingsTrigger.addEventListener('click', apriImpostazioni);
+    }
+    
+    // Chiusura impostazioni
+    if (SettingsDOM.closeBtn) {
+        SettingsDOM.closeBtn.addEventListener('click', chiudiImpostazioni);
+    }
+    
+    // Chiusura con overlay
+    if (SettingsDOM.overlay) {
+        SettingsDOM.overlay.addEventListener('click', chiudiImpostazioni);
+    }
+    
+    // Chiusura con tasto Esc
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && SettingsDOM.panel && !SettingsDOM.panel.hidden) {
+            chiudiImpostazioni();
+        }
+    });
+    
+    // Toggle tema scuro (al momento è sempre scuro, ma prepariamo il toggle)
+    if (SettingsDOM.darkModeToggle) {
+        SettingsDOM.darkModeToggle.addEventListener('change', function() {
+            const isDark = this.checked;
+            if (isDark) {
+                document.body.style.background = 'radial-gradient(circle at 50% 50%, #0f2940 0%, #0a1929 70%)';
+                aggiungiMessaggioBot('🌙 Tema scuro attivato');
+            } else {
+                document.body.style.background = 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)';
+                document.body.style.color = '#1a1a1a';
+                aggiungiMessaggioBot('☀️ Tema chiaro attivato (sperimentale)');
+            }
+            
+            // Salva preferenza
+            localStorage.setItem('sayhi-dark-mode', isDark);
+        });
+    }
+    
+    // Gestione dimensione testo
+    let fontSizeLevel = parseInt(localStorage.getItem('sayhi-font-size') || '0');
+    
+    function updateFontSize() {
+        const baseSize = 16; // px base
+        const scale = 1 + (fontSizeLevel * 0.1); // +/- 10% per livello
+        const newSize = baseSize * scale;
+        document.documentElement.style.fontSize = newSize + 'px';
+        localStorage.setItem('sayhi-font-size', fontSizeLevel);
+    }
+    
+    if (SettingsDOM.fontSizeUp) {
+        SettingsDOM.fontSizeUp.addEventListener('click', () => {
+            if (fontSizeLevel < 3) {
+                fontSizeLevel++;
+                updateFontSize();
+            }
+        });
+    }
+    
+    if (SettingsDOM.fontSizeDown) {
+        SettingsDOM.fontSizeDown.addEventListener('click', () => {
+            if (fontSizeLevel > -2) {
+                fontSizeLevel--;
+                updateFontSize();
+            }
+        });
+    }
+    
+    if (SettingsDOM.fontSizeReset) {
+        SettingsDOM.fontSizeReset.addEventListener('click', () => {
+            fontSizeLevel = 0;
+            updateFontSize();
+        });
+    }
+    
+    // Notifiche (salva in localStorage)
+    if (SettingsDOM.notifyCircolari) {
+        SettingsDOM.notifyCircolari.addEventListener('change', function() {
+            localStorage.setItem('sayhi-notify-circolari', this.checked);
+        });
+        // Carica stato iniziale
+        const saved = localStorage.getItem('sayhi-notify-circolari');
+        if (saved !== null) SettingsDOM.notifyCircolari.checked = saved === 'true';
+    }
+    
+    if (SettingsDOM.notifyScadenze) {
+        SettingsDOM.notifyScadenze.addEventListener('change', function() {
+            localStorage.setItem('sayhi-notify-scadenze', this.checked);
+        });
+        const saved = localStorage.getItem('sayhi-notify-scadenze');
+        if (saved !== null) SettingsDOM.notifyScadenze.checked = saved === 'true';
+    }
+    
+    if (SettingsDOM.notifyEventi) {
+        SettingsDOM.notifyEventi.addEventListener('change', function() {
+            localStorage.setItem('sayhi-notify-eventi', this.checked);
+        });
+        const saved = localStorage.getItem('sayhi-notify-eventi');
+        if (saved !== null) SettingsDOM.notifyEventi.checked = saved === 'true';
+    }
+    
+    // Salva cronologia
+    if (SettingsDOM.saveHistory) {
+        SettingsDOM.saveHistory.addEventListener('change', function() {
+            localStorage.setItem('sayhi-save-history', this.checked);
+            if (!this.checked) {
+                aggiungiMessaggioBot('⚠️ La cronologia non verrà più salvata. I messaggi attuali saranno cancellati alla chiusura.');
+            } else {
+                aggiungiMessaggioBot('✅ Cronologia chat attivata');
+            }
+        });
+        const saved = localStorage.getItem('sayhi-save-history');
+        if (saved !== null) SettingsDOM.saveHistory.checked = saved === 'true';
+    }
+    
+    // Cancella cronologia
+    if (SettingsDOM.clearHistory) {
+        SettingsDOM.clearHistory.addEventListener('click', () => {
+            if (confirm('Sei sicuro di voler cancellare tutta la cronologia della chat?')) {
+                // Mantieni solo il messaggio di benvenuto
+                const chatMessages = document.getElementById('chat-messages');
+                if (chatMessages) {
+                    const welcomeMessage = chatMessages.querySelector('.message-bot');
+                    chatMessages.innerHTML = '';
+                    if (welcomeMessage) {
+                        chatMessages.appendChild(welcomeMessage.parentElement);
+                    }
+                }
+                AppState.conversazione = [];
+                aggiungiMessaggioBot('🗑️ Cronologia chat cancellata con successo!');
+                chiudiImpostazioni();
+            }
+        });
+    }
+}
+
+// ============================================================================
 
 // ============================================================================
 // FINE SCRIPT
