@@ -1,4 +1,4 @@
-Ecco la documentazione completa pronta da copiare e incollare in un documento Word/Google Docs e poi esportare come PDF.
+
 
 ---
 
@@ -636,10 +636,4 @@ Per l'orario, supporta l'estrazione di classe e giorno tramite regex e confronto
 
 ---
 
-**Sviluppato con ❤️ per l'I.T.E.T. Blaise Pascal**
-
-**© 2026 - Tutti i diritti riservati**
-
----
-
-Fammi sapere se devo aggiungere o modificare qualcosa!
+Sviluppato dal Gruppo Broly del FSL STAMPASI
