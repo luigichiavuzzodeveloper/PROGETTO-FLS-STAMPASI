@@ -109,6 +109,53 @@
       "destinatari": ["docenti", "genitori"]
     }
   ],
+  "compiti": [
+    {
+      "id": "comp-001",
+      "materia": "Matematica",
+      "tipo": "verifica",
+      "descrizione": "Verifica sulle derivate",
+      "data": "2026-05-12",
+      "classe": "5C",
+      "docente": "Prof. De Luca"
+    },
+    {
+      "id": "comp-002",
+      "materia": "TPSIT",
+      "tipo": "compito",
+      "descrizione": "Consegna progetto database relazionale",
+      "data": "2026-05-15",
+      "classe": "3B",
+      "docente": "Prof.ssa Rinaldi"
+    },
+    {
+      "id": "comp-003",
+      "materia": "Italiano",
+      "tipo": "interrogazione",
+      "descrizione": "Interrogazione su Leopardi",
+      "data": "2026-05-10",
+      "classe": "3B",
+      "docente": "Prof. Esposito"
+    },
+    {
+      "id": "comp-004",
+      "materia": "Sistemi e Reti",
+      "tipo": "verifica",
+      "descrizione": "Verifica su VLAN e subnetting",
+      "data": "2026-05-14",
+      "classe": "3A",
+      "docente": "Prof. Ferrari"
+    },
+    {
+      "id": "comp-005",
+      "materia": "Matematica",
+      "tipo": "compito",
+      "descrizione": "Esercizi p. 134 n. 12-18",
+      "data": "2026-05-09",
+      "classe": "3A",
+      "docente": "Prof. Romano"
+    }
+  ],
   "orario": {
     "1A": {
       "lunedì": [

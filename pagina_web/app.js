@@ -656,6 +656,18 @@ function elaboraMessaggio(messaggio) {
         mostraAiuto();
         return;
     }
+
+        // Interazione 11: Compiti e verifiche
+    if (contieneParoleChiave(messaggio, ['compiti', 'verifica', 'verifiche', 'interrogazione', 'compito', 'consegna', 'esercizi'])) {
+        mostraCompiti(messaggio);
+        return;
+    }
+
+        // Interazione 12: Riepilogo
+    if (contieneParoleChiave(messaggio, ['riepilogo', 'riassunto', 'oggi', 'che si fa oggi', 'giornata', 'sintesi'])) {
+        mostraRiepilogo();
+        return;
+    }
     
     // Fallback: messaggio non riconosciuto
     const errori = dati.risposte_predefinite?.errore || [
@@ -1117,6 +1129,153 @@ function gestisciEmergenza(messaggio) {
 }
 
 // ============================================================================
+// INTERAZIONE 11: MOSTRA COMPITI E VERIFICHE
+// ============================================================================
+
+function mostraCompiti() {
+    const dati = AppState.dati;
+    const messaggioOriginale = arguments[0] || '';
+    
+    if (!dati.compiti || dati.compiti.length === 0) {
+        aggiungiMessaggioBot('📝 Nessun compito o verifica registrato al momento.');
+        return;
+    }
+    
+    const classeUtente = AppState.contesto.classe;
+    const oggi = new Date().toISOString().split('T')[0];
+    
+    // Filtra per classe dell'utente
+    let compitiFiltrati = dati.compiti.filter(c => c.classe === classeUtente);
+    
+    // Se l'utente non ha classe o non trova compiti per la sua classe
+    if (compitiFiltrati.length === 0) {
+        // Cerca una classe nel messaggio
+        const matchClasse = messaggioOriginale.match(/\b([1-5][AB])\b/i);
+        if (matchClasse) {
+            compitiFiltrati = dati.compiti.filter(c => c.classe === matchClasse[1].toUpperCase());
+        }
+    }
+    
+    if (compitiFiltrati.length === 0) {
+        aggiungiMessaggioBot(`📝 Nessun compito o verifica trovato per la classe ${classeUtente || 'specificata'}.`);
+        return;
+    }
+    
+    // Filtra quelli ancora da fare (data >= oggi)
+    const compitiFuturi = compitiFiltrati
+        .filter(c => c.data >= oggi)
+        .sort((a, b) => a.data.localeCompare(b.data));
+    
+    if (compitiFuturi.length === 0) {
+        aggiungiMessaggioBot('✅ Nessun compito o verifica in scadenza! Goditi il tempo libero. 🎉');
+        return;
+    }
+    
+    // Rileva se l'utente ha chiesto solo verifiche/interrogazioni
+    const cercaVerifiche = contieneParoleChiave(messaggioOriginale, ['verifica', 'verifiche', 'interrogazione', 'interrogazioni']);
+    const cercaCompiti = contieneParoleChiave(messaggioOriginale, ['compito', 'compiti', 'esercizi', 'consegna']);
+    
+    let lista = compitiFuturi;
+    
+    if (cercaVerifiche && !cercaCompiti) {
+        lista = compitiFuturi.filter(c => c.tipo === 'verifica' || c.tipo === 'interrogazione');
+    } else if (cercaCompiti && !cercaVerifiche) {
+        lista = compitiFuturi.filter(c => c.tipo === 'compito');
+    }
+    
+    if (lista.length === 0) {
+        aggiungiMessaggioBot('✅ Nessuna verifica o compito in programma! 🎉');
+        return;
+    }
+    
+    let risposta = `📝 **Compiti e verifiche per la classe ${compitiFiltrati[0].classe}:**\n\n`;
+    
+    lista.slice(0, 6).forEach((c, i) => {
+        let emoji = c.tipo === 'verifica' ? '📝' : c.tipo === 'interrogazione' ? '🗣️' : '✏️';
+        let tipoTesto = c.tipo === 'verifica' ? 'VERIFICA' : c.tipo === 'interrogazione' ? 'INTERROGAZIONE' : 'COMPITO';
+        
+        risposta += `${i + 1}. ${emoji} **${tipoTesto}** - ${c.materia}\n`;
+        risposta += `   📄 ${c.descrizione}\n`;
+        risposta += `   📅 ${formattaData(c.data)} | 👨‍🏫 ${c.docente}\n\n`;
+    });
+    
+    if (lista.length > 6) {
+        risposta += `...e altri ${lista.length - 6} in programma.\n`;
+    }
+    
+    risposta += `💡 Puoi chiedermi: "verifiche", "compiti di matematica" o "compiti 3A".`;
+    
+    aggiungiMessaggioBot(risposta);
+}
+
+// ============================================================================
+// INTERAZIONE 12: RIEPILOGO GIORNALIERO
+// ============================================================================
+
+function mostraRiepilogo() {
+    const dati = AppState.dati;
+    const classe = AppState.contesto.classe;
+    const oggi = new Date();
+    const oggiISO = oggi.toISOString().split('T')[0];
+    const giorniSettimana = ['domenica', 'lunedì', 'martedì', 'mercoledì', 'giovedì', 'venerdì', 'sabato'];
+    const giornoOggiNome = giorniSettimana[oggi.getDay()];
+    
+    let risposta = `📋 **Riepilogo di oggi (${capitalize(giornoOggiNome)} ${formattaData(oggiISO)})**\n\n`;
+    
+    // 1. Orario di oggi
+    if (dati.orario && dati.orario[classe] && dati.orario[classe][giornoOggiNome]) {
+        const lezioni = dati.orario[classe][giornoOggiNome];
+        const numOre = lezioni.filter(l => l.materia !== 'Intervallo').length;
+        risposta += `📚 **Orario:** ${numOre} ore di lezione\n`;
+    } else {
+        risposta += `📚 **Orario:** Nessuna lezione oggi\n`;
+    }
+    
+    // 2. Compiti/verifiche di oggi
+    if (dati.compiti) {
+        const compitiOggi = dati.compiti.filter(c => c.data === oggiISO && c.classe === classe);
+        if (compitiOggi.length > 0) {
+            risposta += `📝 **Compiti/Verifiche oggi:**\n`;
+            compitiOggi.forEach(c => {
+                const emoji = c.tipo === 'verifica' ? '📝' : c.tipo === 'interrogazione' ? '🗣️' : '✏️';
+                risposta += `   ${emoji} ${c.materia}: ${c.descrizione}\n`;
+            });
+        } else {
+            risposta += `📝 **Compiti/Verifiche:** Nessuno\n`;
+        }
+    }
+    
+    // 3. Eventi di oggi
+    if (dati.eventi) {
+        const eventiOggi = dati.eventi.filter(e => e.data === oggiISO);
+        if (eventiOggi.length > 0) {
+            risposta += `📅 **Eventi oggi:**\n`;
+            eventiOggi.forEach(e => {
+                risposta += `   📌 ${e.titolo} - ${e.ora_inizio} ${e.luogo}\n`;
+            });
+        } else {
+            risposta += `📅 **Eventi:** Nessuno\n`;
+        }
+    }
+    
+    // 4. Circolari non lette
+    if (dati.circolari) {
+        const nonLette = dati.circolari.filter(c => !c.letta).length;
+        risposta += `📋 **Circolari da leggere:** ${nonLette}\n`;
+    }
+    
+    // 5. Moduli da firmare
+    if (dati.moduli) {
+        const daFirmare = dati.moduli.filter(m => m.stato === 'da_firmare').length;
+        risposta += `✍️ **Moduli da firmare:** ${daFirmare}\n`;
+    }
+    
+    risposta += `\n💡 Chiedimi dettagli su qualsiasi cosa!`;
+    
+    aggiungiMessaggioBot(risposta);
+}
+
+// ============================================================================
 // MOSTRA AIUTO
 // ============================================================================
 
@@ -1133,6 +1292,8 @@ function mostraAiuto() {
 ✍️ **Moduli** - "moduli da firmare"
 📅 **Eventi** - "prossimi eventi"
 🚨 **Emergenza** - scrivi "emergenza" per aiuto immediato
+📝 **Compiti/Verifiche** - "compiti", "verifiche", "che compiti ho?"
+📋 **Riepilogo** - "riepilogo di oggi", "che si fa oggi?"
 
 Cosa posso fare per te ora?`;
     
