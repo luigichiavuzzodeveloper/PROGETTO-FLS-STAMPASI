@@ -12,11 +12,11 @@
     {
       "id": "circ-171",
       "titolo": "Convocazione Consigli di Classe",
-      "corpo": "A causa dell'allerta meteo arancione diramata dalla Protezione Civile, tutte le attività didattiche sono sospese per la giornata di domani 21/04/2026. Il personale ATA è tenuto a presentarsi regolarmente. Si raccomanda di monitorare il sito per ulteriori aggiornamenti.",
+      "corpo": "Si comunica che sono convocati i Consigli di Classe secondo il calendario allegato, per la discussione dell’andamento didattico-disciplinare e la programmazione delle attività finali. Tutti i docenti sono tenuti a partecipare con puntualità. Eventuali assenze dovranno essere tempestivamente giustificate.",
       "categoria": "emergenza",
       "priorita": "urgente",
       "data_pubblicazione": "2026-04-20",
-      "scadenza": "2026-04-22",
+      "scadenza": "2026-05-22",
       "destinatari": ["tutti"],
       "allegati": [
         {"nome": "Circolare_n171.pdf", "tipo": "pdf", "url": "https://limewire.com/d/aXEpf#ujxkNsAhKy"}
@@ -26,7 +26,7 @@
     {
       "id": "circ-002",
       "titolo": "Calendario scrutini secondo quadrimestre",
-      "corpo": "Si comunica il calendario degli scrutini del secondo quadrimestre per l'a.s. 2025/2026. I consigli di classe si riuniranno secondo il prospetto allegato. Si ricorda di inserire tutti i voti entro 48 ore prima dello scrutinio.",
+      "corpo":"Si rende noto il calendario degli scrutini del secondo quadrimestre, che si svolgeranno secondo le date e gli orari indicati. I docenti dovranno inserire le proposte di voto nei tempi previsti. Si raccomanda la massima precisione nella compilazione degli atti.",
       "categoria": "didattica",
       "priorita": "importante",
       "data_pubblicazione": "2026-04-19",
