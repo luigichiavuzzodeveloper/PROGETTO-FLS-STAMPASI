@@ -712,16 +712,23 @@ function mostraCircolariRecenti() {
         <div class="circolari-cards">
     `;
     
-    circolari.forEach(circ => {
+    circolari.forEach((circ, index) => {
         const classePriorita = circ.priorita === 'urgente' ? 'urgent' : 
                                circ.priorita === 'importante' ? 'important' : 'normal';
         const iconaPriorita = circ.priorita === 'urgente' ? '🔴 Urgente' : 
                                circ.priorita === 'importante' ? '🟡 Importante' : '🔵 Ordinaria';
         
-        const allegatiHTML = (circ.allegati && circ.allegati.length > 0) ? 
-            circ.allegati.map(a => 
-                `<button class="card-btn" onclick="window.scaricaAllegato('${circ.id}', '${a.url}', '${a.nome}')">📎 ${a.nome}</button>`
-            ).join(' ') : '';
+        // Prepara lista allegati (solo per il contenuto espandibile)
+        let allegatiHTML = '';
+        if (circ.allegati && circ.allegati.length > 0) {
+            allegatiHTML = `
+                <div class="allegati-list">
+                    ${circ.allegati.map(a => 
+                        `<a href="${a.url}" target="_blank" class="allegato-link" onclick="window.scaricaAllegato('${circ.id}', '${a.url}', '${a.nome}')">📎 ${a.nome}</a>`
+                    ).join('')}
+                </div>
+            `;
+        }
         
         cardHTML += `
             <div class="circolare-card priority-${classePriorita}" tabindex="0">
@@ -731,10 +738,17 @@ function mostraCircolariRecenti() {
                 </div>
                 <h6 class="text-white fw-bold">${escapeHTML(circ.titolo)}</h6>
                 <p class="text-white-50 small">${escapeHTML(circ.corpo.substring(0, 100))}...</p>
-                <div class="d-flex gap-2 flex-wrap">
-                    ${allegatiHTML}
-                    <button class="card-btn" onclick="window.mostraDettaglioCircolare('${circ.id}')">📖 Leggi tutto</button>
+                
+                <!-- Tendina espandibile -->
+                <div class="circolare-expand" id="expand-${circ.id}">
+                    <p>${escapeHTML(circ.corpo)}</p>
+                    ${circ.scadenza ? `<p>⏰ <strong>Scadenza:</strong> ${formattaData(circ.scadenza)}</p>` : ''}
                 </div>
+                
+                <!-- Bottone Leggi tutto a tutta larghezza -->
+                <button class="card-btn-expand" onclick="toggleCircolare('${circ.id}', this)">
+                    📖 Leggi tutto <i class="bi bi-chevron-down ms-1"></i>
+                </button>
             </div>
         `;
     });
@@ -742,6 +756,38 @@ function mostraCircolariRecenti() {
     cardHTML += `</div>`;
     aggiungiCardHTML(cardHTML);
 }
+
+//---VISUALIZZAZIONE IN MANIERA CIRCOLARE DELLE CIRCOLARI ESTESE---
+
+function toggleCircolare(id, btn) {
+    const expand = document.getElementById('expand-' + id);
+    if (!expand) return;
+    
+    const isOpen = expand.classList.contains('open');
+    
+    if (isOpen) {
+        expand.classList.remove('open');
+        btn.innerHTML = '📖 Leggi tutto <i class="bi bi-chevron-down ms-1"></i>';
+        btn.style.background = 'rgba(72, 202, 228, 0.15)';
+    } else {
+        expand.classList.add('open');
+        btn.innerHTML = '📖 Chiudi <i class="bi bi-chevron-up ms-1"></i>';
+        btn.style.background = 'rgba(72, 202, 228, 0.3)';
+    }
+    
+    // Marca la circolare come letta quando la espandi
+    if (!isOpen) {
+        const dati = AppState.dati;
+        const circ = dati.circolari.find(c => c.id === id);
+        if (circ && !circ.letta) {
+            circ.letta = true;
+            aggiornaStatistiche();
+        }
+    }
+}
+
+// Esponi la funzione globalmente
+window.toggleCircolare = toggleCircolare;
 
 // ============================================================================
 // INTERAZIONE 2: RICERCA PER PAROLA CHIAVE
@@ -761,7 +807,7 @@ function cercaPerParolaChiave(keyword) {
     );
     
     if (risultati.length === 0) {
-        aggiungiMessaggioBot(`🔍 Nessuna circolare trovata per **${keyword}**. Prova con altre parole chiave o controlla le circolari recenti.`);
+        aggiungiMessaggioBot(`🔍 Nessuna circolare trovata per **${keyword}**. Prova con altre parole chiave.`);
         return;
     }
     
@@ -776,6 +822,17 @@ function cercaPerParolaChiave(keyword) {
         const classePriorita = circ.priorita === 'urgente' ? 'urgent' : 
                                circ.priorita === 'importante' ? 'important' : 'normal';
         
+        let allegatiHTML = '';
+        if (circ.allegati && circ.allegati.length > 0) {
+            allegatiHTML = `
+                <div class="allegati-list">
+                    ${circ.allegati.map(a => 
+                        `<a href="${a.url}" target="_blank" class="allegato-link" onclick="window.scaricaAllegato('${circ.id}', '${a.url}', '${a.nome}')">📎 ${a.nome}</a>`
+                    ).join('')}
+                </div>
+            `;
+        }
+        
         cardHTML += `
             <div class="circolare-card priority-${classePriorita}" tabindex="0">
                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -784,7 +841,15 @@ function cercaPerParolaChiave(keyword) {
                 </div>
                 <h6 class="text-white fw-bold">${escapeHTML(circ.titolo)}</h6>
                 <p class="text-white-50 small">${escapeHTML(circ.corpo.substring(0, 100))}...</p>
-                <button class="card-btn" onclick="window.mostraDettaglioCircolare('${circ.id}')">📖 Leggi tutto</button>
+                
+                <div class="circolare-expand" id="expand-${circ.id}">
+                    <p>${escapeHTML(circ.corpo)}</p>
+                    ${circ.scadenza ? `<p>⏰ <strong>Scadenza:</strong> ${formattaData(circ.scadenza)}</p>` : ''}
+                </div>
+                
+                <button class="card-btn-expand" onclick="toggleCircolare('${circ.id}', this)">
+                    📖 Leggi tutto <i class="bi bi-chevron-down ms-1"></i>
+                </button>
             </div>
         `;
     });

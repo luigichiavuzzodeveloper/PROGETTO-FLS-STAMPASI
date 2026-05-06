@@ -1127,6 +1127,76 @@
         visibility: hidden;
     }
 }
+
+/* Stile tendina circolare */
+.circolare-expand {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.4s ease, margin 0.4s ease;
+    background: rgba(20, 54, 80, 0.5);
+    border-radius: 0 0 20px 20px;
+    margin-top: 0;
+    border: 1px solid transparent;
+}
+
+.circolare-expand.open {
+    max-height: 2000px;
+    margin-top: 1rem;
+    padding: 1.2rem;
+    border: 1px solid var(--border-color);
+}
+
+.circolare-expand p {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+}
+
+.circolare-expand .allegati-list {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.8rem;
+}
+
+.allegato-link {
+    color: var(--accent-teal);
+    text-decoration: none;
+    font-size: 0.85rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 10px;
+    background: rgba(72, 202, 228, 0.1);
+    border: 1px solid rgba(72, 202, 228, 0.3);
+    transition: all 0.2s ease;
+}
+
+.allegato-link:hover {
+    background: rgba(72, 202, 228, 0.25);
+    color: white;
+}
+
+.card-btn-expand {
+    width: 100%;
+    background: rgba(72, 202, 228, 0.15);
+    border: 1px solid rgba(72, 202, 228, 0.3);
+    color: var(--accent-teal);
+    padding: 0.7rem 1.2rem;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    text-align: center;
+}
+
+.card-btn-expand:hover {
+    background: rgba(72, 202, 228, 0.3);
+    border-color: var(--accent-teal);
+    box-shadow: 0 4px 15px rgba(72, 202, 228, 0.2);
+    transform: translateY(-1px);
+}
 </style>
 </head>
 <body>
