@@ -605,7 +605,7 @@ function elaboraMessaggio(messaggio) {
     
     // Interazione 6: Orario
     if (contieneParoleChiave(messaggio, ['orario', 'lezioni', 'materie', 'domani', 'lezione'])) {
-        mostraOrario();
+        mostraOrario(messaggio);
         return;
     }
     
@@ -891,90 +891,122 @@ function scaricaAllegato(idCircolare, url, nomeFile) {
 
 function mostraOrario() {
     const dati = AppState.dati;
-    const classe = AppState.contesto.classe;
-    const messaggioOriginale = arguments[1] || ''; // Passa il messaggio utente se disponibile
     
-    if (!dati.orario || !dati.orario[classe]) {
-        aggiungiMessaggioBot(`❌ Orario non disponibile per la classe ${classe}.`);
+    if (!dati.orario) {
+        aggiungiMessaggioBot('❌ Orario non disponibile al momento.');
         return;
     }
     
-    const orario = dati.orario[classe];
-    const giorniSettimana = ['lunedì', 'martedì', 'mercoledì', 'giovedì', 'venerdì', 'sabato'];
-    const oggi = new Date();
-    const giornoOggiIndex = oggi.getDay(); // 0 = domenica, 1 = lunedì, ..., 6 = sabato
-    const giornoOggiNome = giorniSettimana[giornoOggiIndex - 1]; // converte a lunedì=0
+    // Prendi la classe dell'utente loggato
+    const classeUtente = AppState.contesto.classe;
+    // Prendi il messaggio originale (se disponibile)
+    const messaggioOriginale = arguments[0] || '';
     
-    // Controlla se l'utente ha chiesto un giorno specifico o "domani"
+    const classiDisponibili = Object.keys(dati.orario);
+    let classeRichiesta = classeUtente;
     let giornoRichiesto = null;
     
-    // Verifica se ha chiesto "domani"
-    if (contieneParoleChiave(messaggioOriginale, ['domani'])) {
-        const domani = new Date(oggi);
-        domani.setDate(oggi.getDate() + 1);
-        const domaniIndex = domani.getDay();
-        giornoRichiesto = giorniSettimana[domaniIndex - 1];
-    }
-    // Verifica se ha chiesto un giorno della settimana specifico
-    else {
-        for (let giorno of giorniSettimana) {
-            if (contieneParoleChiave(messaggioOriginale, [giorno])) {
-                giornoRichiesto = giorno;
-                break;
+    // Cerca se l'utente ha specificato una classe nel messaggio
+    if (messaggioOriginale) {
+        const matchClasse = messaggioOriginale.match(/\b([1-5][AB])\b/i);
+        if (matchClasse) {
+            const classeTrovata = matchClasse[1].toUpperCase();
+            if (classiDisponibili.includes(classeTrovata)) {
+                classeRichiesta = classeTrovata;
             }
         }
     }
     
-    // Se non ha chiesto un giorno specifico, mostra l'orario di oggi (se è un giorno scolastico)
+    // Se non ha una classe (es. ATA senza classe)
+    if (!classeRichiesta || !classiDisponibili.includes(classeRichiesta)) {
+        aggiungiMessaggioBot('📚 Specifica la classe per vedere l\'orario. Ad esempio: "orario 3A" o "orario 3B".\n\nClassi disponibili: ' + classiDisponibili.join(', '));
+        return;
+    }
+    
+    const orario = dati.orario[classeRichiesta];
+    const giorniSettimana = ['lunedì', 'martedì', 'mercoledì', 'giovedì', 'venerdì'];
+    const oggi = new Date();
+    const giornoOggiIndex = oggi.getDay();
+    const giornoOggiNome = giorniSettimana[giornoOggiIndex - 1];
+    
+    // Cerca se l'utente ha chiesto un giorno specifico
+    if (messaggioOriginale) {
+        if (contieneParoleChiave(messaggioOriginale, ['domani'])) {
+            const domani = new Date(oggi);
+            domani.setDate(oggi.getDate() + 1);
+            const domaniIndex = domani.getDay();
+            if (domaniIndex >= 1 && domaniIndex <= 5) {
+                giornoRichiesto = giorniSettimana[domaniIndex - 1];
+            }
+        } else {
+            for (let giorno of giorniSettimana) {
+                if (contieneParoleChiave(messaggioOriginale, [giorno])) {
+                    giornoRichiesto = giorno;
+                    break;
+                }
+            }
+        }
+    }
+    
+    // Se non è stato chiesto un giorno specifico, mostra oggi (se è un giorno scolastico)
     if (!giornoRichiesto) {
-        // Se oggi è un giorno scolastico (lunedì-sabato) e esiste l'orario
-        if (giornoOggiIndex >= 1 && giornoOggiIndex <= 6 && orario[giornoOggiNome]) {
+        if (giornoOggiIndex >= 1 && giornoOggiIndex <= 5 && orario[giornoOggiNome]) {
             giornoRichiesto = giornoOggiNome;
         } else {
-            // Oggi non è giorno scolastico -> mostra il prossimo giorno con lezioni
-            let trovato = false;
+            // Cerca il prossimo giorno con lezioni
             for (let i = 1; i <= 7; i++) {
                 const giornoTest = new Date(oggi);
                 giornoTest.setDate(oggi.getDate() + i);
                 const giornoTestIndex = giornoTest.getDay();
                 const giornoTestNome = giorniSettimana[giornoTestIndex - 1];
-                if (giornoTestIndex >= 1 && giornoTestIndex <= 6 && orario[giornoTestNome]) {
+                if (giornoTestIndex >= 1 && giornoTestIndex <= 5 && orario[giornoTestNome]) {
                     giornoRichiesto = giornoTestNome;
-                    trovato = true;
                     break;
                 }
             }
-            if (!trovato) {
-                aggiungiMessaggioBot(`📚 Non ci sono lezioni programmate per i prossimi giorni. Controlla il calendario scolastico. 🎉`);
-                return;
-            }
         }
+    }
+    
+    if (!giornoRichiesto || !orario[giornoRichiesto]) {
+        aggiungiMessaggioBot(`📚 Nessun orario disponibile per la classe ${classeRichiesta}.`);
+        return;
     }
     
     const lezioniGiorno = orario[giornoRichiesto];
     
     if (!lezioniGiorno || lezioniGiorno.length === 0) {
-        aggiungiMessaggioBot(`📚 ${capitalize(giornoRichiesto)} non ci sono lezioni! Goditi la giornata. 🎉`);
+        aggiungiMessaggioBot(`📚 ${capitalize(giornoRichiesto)} la classe ${classeRichiesta} non ha lezioni! 🎉`);
         return;
     }
     
-    // Determina se è oggi, domani o altro giorno
+    // Prepara l'intestazione
     let prefisso = '';
-    if (giornoRichiesto === giornoOggiNome && giornoOggiIndex >= 1 && giornoOggiIndex <= 6) {
-        prefisso = '📚 **Orario di oggi**';
-    } else if (contieneParoleChiave(messaggioOriginale, ['domani'])) {
-        prefisso = `📚 **Orario di domani (${capitalize(giornoRichiesto)})**`;
+    if (giornoRichiesto === giornoOggiNome && giornoOggiIndex >= 1 && giornoOggiIndex <= 5) {
+        prefisso = `📚 **Orario di oggi per la classe ${classeRichiesta}**`;
+    } else if (messaggioOriginale && contieneParoleChiave(messaggioOriginale, ['domani'])) {
+        prefisso = `📚 **Orario di domani (${capitalize(giornoRichiesto)}) - Classe ${classeRichiesta}**`;
     } else {
-        prefisso = `📚 **Orario di ${capitalize(giornoRichiesto)}**`;
+        prefisso = `📚 **Orario di ${capitalize(giornoRichiesto)} - Classe ${classeRichiesta}**`;
     }
     
-    let risposta = `${prefisso}:\n\n`;
+    const isGiorno50min = (giornoRichiesto === 'martedì' || giornoRichiesto === 'venerdì');
+    const numOre = lezioniGiorno.filter(l => l.materia !== 'Intervallo').length;
+    
+    let risposta = `${prefisso} (${numOre} ore)\n\n`;
+    
     lezioniGiorno.forEach(lezione => {
-        risposta += `🕐 ${lezione.ora} - ${lezione.materia} (${lezione.docente})\n`;
+        if (lezione.materia === 'Intervallo') {
+            risposta += `☕ ${lezione.ora} - Intervallo\n`;
+        } else {
+            risposta += `🕐 ${lezione.ora} - ${lezione.materia} (${lezione.docente})\n`;
+        }
     });
     
-    // Aggiunge un suggerimento per altri giorni
-    risposta += `\n💡 Puoi chiedermi: "orario di martedì" o "domani" per altri giorni.`;
+    if (isGiorno50min) {
+        risposta += `\n⚠️ Il ${giornoRichiesto} le ore sono da 50 minuti.`;
+    }
+    
+    risposta += `\n\n💡 Puoi chiedermi: "orario di martedì", "domani", o "orario 3A".`;
     
     aggiungiMessaggioBot(risposta);
 }

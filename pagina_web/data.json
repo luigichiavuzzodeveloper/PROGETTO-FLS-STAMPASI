@@ -10,8 +10,8 @@
   },
   "circolari": [
     {
-      "id": "circ-001",
-      "titolo": "Sospensione attività didattiche - Allerta meteo",
+      "id": "circ-171",
+      "titolo": "Convocazione Consigli di Classe",
       "corpo": "A causa dell'allerta meteo arancione diramata dalla Protezione Civile, tutte le attività didattiche sono sospese per la giornata di domani 21/04/2026. Il personale ATA è tenuto a presentarsi regolarmente. Si raccomanda di monitorare il sito per ulteriori aggiornamenti.",
       "categoria": "emergenza",
       "priorita": "urgente",
@@ -19,7 +19,7 @@
       "scadenza": "2026-04-22",
       "destinatari": ["tutti"],
       "allegati": [
-        {"nome": "Circolare_n45.pdf", "tipo": "pdf", "url": "/allegati/circ45.pdf"}
+        {"nome": "Circolare_n171.pdf", "tipo": "pdf", "url": "https://limewire.com/d/aXEpf#ujxkNsAhKy"}
       ],
       "letta": false
     },
@@ -35,7 +35,7 @@
       "allegati": [
         {"nome": "Calendario_scrutini.pdf", "tipo": "pdf", "url": "/allegati/scrutini.pdf"}
       ],
-      "letta": true
+      "letta": false
     },
     {
       "id": "circ-003",
@@ -71,7 +71,7 @@
     {
       "id": "evt-001",
       "titolo": "Collegio Docenti straordinario",
-      "data": "2026-04-20",
+      "data": "2026-05-12",
       "ora_inizio": "16:30",
       "ora_fine": "18:30",
       "luogo": "Aula Magna",
@@ -81,7 +81,7 @@
     {
       "id": "evt-002",
       "titolo": "Consiglio di classe 3B",
-      "data": "2026-04-22",
+      "data": "2026-05-22",
       "ora_inizio": "15:00",
       "ora_fine": "16:30",
       "luogo": "Sala Riunioni",
@@ -90,8 +90,8 @@
     },
     {
       "id": "evt-003",
-      "titolo": "Festa della Liberazione",
-      "data": "2026-04-25",
+      "titolo": "Festa della Repubblica",
+      "data": "2026-06-02",
       "ora_inizio": "00:00",
       "ora_fine": "23:59",
       "luogo": "Festività nazionale",
@@ -100,8 +100,8 @@
     },
     {
       "id": "evt-004",
-      "titolo": "Incontro genitori 3B",
-      "data": "2026-05-02",
+      "titolo": "Incontro in pizzeria 3B",
+      "data": "2026-06-03",
       "ora_inizio": "17:00",
       "ora_fine": "19:00",
       "luogo": "Aula 3B",
@@ -110,20 +110,424 @@
     }
   ],
   "orario": {
-    "3B": {
+    "1A": {
       "lunedì": [
-        {"ora": "08:00-09:00", "materia": "Matematica", "docente": "Prof. Rossi"},
-        {"ora": "09:00-10:00", "materia": "Italiano", "docente": "Prof.ssa Bianchi"},
-        {"ora": "10:00-11:00", "materia": "Scienze", "docente": "Prof.ssa Verdi"},
-        {"ora": "11:15-12:15", "materia": "Inglese", "docente": "Prof.ssa Neri"},
-        {"ora": "12:15-13:15", "materia": "Storia", "docente": "Prof. Rossi"}
+        {"ora": "08:15-09:15", "materia": "Italiano", "docente": "Prof.ssa Bianchi"},
+        {"ora": "09:15-10:15", "materia": "Matematica", "docente": "Prof. Romano"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Scienze", "docente": "Prof.ssa Verdi"},
+        {"ora": "11:30-12:30", "materia": "Inglese", "docente": "Prof.ssa Neri"},
+        {"ora": "12:30-13:30", "materia": "Storia", "docente": "Prof. Esposito"}
       ],
       "martedì": [
-        {"ora": "08:00-09:00", "materia": "Italiano", "docente": "Prof.ssa Bianchi"},
-        {"ora": "09:00-10:00", "materia": "Matematica", "docente": "Prof. Rossi"},
-        {"ora": "10:00-11:00", "materia": "Ed. Fisica", "docente": "Prof. Gialli"},
-        {"ora": "11:15-12:15", "materia": "Arte", "docente": "Prof.ssa Blu"},
-        {"ora": "12:15-13:15", "materia": "Musica", "docente": "Prof. Viola"}
+        {"ora": "08:15-09:05", "materia": "Matematica", "docente": "Prof. Romano"},
+        {"ora": "09:05-09:55", "materia": "Italiano", "docente": "Prof.ssa Bianchi"},
+        {"ora": "09:55-10:10", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:10-11:00", "materia": "Tecnologie Informatiche", "docente": "Prof. Ferrari"},
+        {"ora": "11:00-11:50", "materia": "Tecnologie Informatiche", "docente": "Prof. Ferrari"},
+        {"ora": "11:50-12:40", "materia": "Ed. Fisica", "docente": "Prof. Gialli"}
+      ],
+      "mercoledì": [
+        {"ora": "08:15-09:15", "materia": "Italiano", "docente": "Prof.ssa Bianchi"},
+        {"ora": "09:15-10:15", "materia": "Scienze", "docente": "Prof.ssa Verdi"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Matematica", "docente": "Prof. Romano"},
+        {"ora": "11:30-12:30", "materia": "Diritto", "docente": "Prof.ssa Moretti"},
+        {"ora": "12:30-13:30", "materia": "Religione", "docente": "Prof. Donati"}
+      ],
+      "giovedì": [
+        {"ora": "08:15-09:15", "materia": "Inglese", "docente": "Prof.ssa Neri"},
+        {"ora": "09:15-10:15", "materia": "Matematica", "docente": "Prof. Romano"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Italiano", "docente": "Prof.ssa Bianchi"},
+        {"ora": "11:30-12:30", "materia": "Storia", "docente": "Prof. Esposito"},
+        {"ora": "12:30-13:30", "materia": "Scienze", "docente": "Prof.ssa Verdi"}
+      ],
+      "venerdì": [
+        {"ora": "08:15-09:05", "materia": "Tecnologie Informatiche", "docente": "Prof. Ferrari"},
+        {"ora": "09:05-09:55", "materia": "Tecnologie Informatiche", "docente": "Prof. Ferrari"},
+        {"ora": "09:55-10:10", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:10-11:00", "materia": "Matematica", "docente": "Prof. Romano"},
+        {"ora": "11:00-11:50", "materia": "Italiano", "docente": "Prof.ssa Bianchi"},
+        {"ora": "11:50-12:40", "materia": "Ed. Fisica", "docente": "Prof. Gialli"}
+      ]
+    },
+    "1B": {
+      "lunedì": [
+        {"ora": "08:15-09:15", "materia": "Matematica", "docente": "Prof. De Luca"},
+        {"ora": "09:15-10:15", "materia": "Italiano", "docente": "Prof.ssa Conti"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Inglese", "docente": "Prof.ssa Neri"},
+        {"ora": "11:30-12:30", "materia": "Scienze", "docente": "Prof. Martini"},
+        {"ora": "12:30-13:30", "materia": "Diritto", "docente": "Prof.ssa Moretti"}
+      ],
+      "martedì": [
+        {"ora": "08:15-09:05", "materia": "Tecnologie Informatiche", "docente": "Prof.ssa Rinaldi"},
+        {"ora": "09:05-09:55", "materia": "Tecnologie Informatiche", "docente": "Prof.ssa Rinaldi"},
+        {"ora": "09:55-10:10", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:10-11:00", "materia": "Italiano", "docente": "Prof.ssa Conti"},
+        {"ora": "11:00-11:50", "materia": "Matematica", "docente": "Prof. De Luca"},
+        {"ora": "11:50-12:40", "materia": "Scienze", "docente": "Prof. Martini"}
+      ],
+      "mercoledì": [
+        {"ora": "08:15-09:15", "materia": "Italiano", "docente": "Prof.ssa Conti"},
+        {"ora": "09:15-10:15", "materia": "Matematica", "docente": "Prof. De Luca"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Inglese", "docente": "Prof.ssa Neri"},
+        {"ora": "11:30-12:30", "materia": "Storia", "docente": "Prof. Esposito"},
+        {"ora": "12:30-13:30", "materia": "Religione", "docente": "Prof. Donati"}
+      ],
+      "giovedì": [
+        {"ora": "08:15-09:15", "materia": "Scienze", "docente": "Prof. Martini"},
+        {"ora": "09:15-10:15", "materia": "Italiano", "docente": "Prof.ssa Conti"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Matematica", "docente": "Prof. De Luca"},
+        {"ora": "11:30-12:30", "materia": "Diritto", "docente": "Prof.ssa Moretti"},
+        {"ora": "12:30-13:30", "materia": "Ed. Fisica", "docente": "Prof. Gialli"}
+      ],
+      "venerdì": [
+        {"ora": "08:15-09:05", "materia": "Matematica", "docente": "Prof. De Luca"},
+        {"ora": "09:05-09:55", "materia": "Italiano", "docente": "Prof.ssa Conti"},
+        {"ora": "09:55-10:10", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:10-11:00", "materia": "Tecnologie Informatiche", "docente": "Prof.ssa Rinaldi"},
+        {"ora": "11:00-11:50", "materia": "Tecnologie Informatiche", "docente": "Prof.ssa Rinaldi"},
+        {"ora": "11:50-12:40", "materia": "Inglese", "docente": "Prof.ssa Neri"}
+      ]
+    },
+    "2A": {
+      "lunedì": [
+        {"ora": "08:15-09:15", "materia": "Matematica", "docente": "Prof. Romano"},
+        {"ora": "09:15-10:15", "materia": "Italiano", "docente": "Prof.ssa Bianchi"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "11:30-12:30", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "12:30-13:30", "materia": "Inglese", "docente": "Prof.ssa Neri"}
+      ],
+      "martedì": [
+        {"ora": "08:15-09:05", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "09:05-09:55", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "09:55-10:10", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:10-11:00", "materia": "Matematica", "docente": "Prof. Romano"},
+        {"ora": "11:00-11:50", "materia": "Italiano", "docente": "Prof.ssa Bianchi"},
+        {"ora": "11:50-12:40", "materia": "Scienze", "docente": "Prof.ssa Verdi"}
+      ],
+      "mercoledì": [
+        {"ora": "08:15-09:15", "materia": "Italiano", "docente": "Prof.ssa Bianchi"},
+        {"ora": "09:15-10:15", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Matematica", "docente": "Prof. Romano"},
+        {"ora": "11:30-12:30", "materia": "Storia", "docente": "Prof. Esposito"},
+        {"ora": "12:30-13:30", "materia": "Ed. Fisica", "docente": "Prof. Gialli"}
+      ],
+      "giovedì": [
+        {"ora": "08:15-09:15", "materia": "Inglese", "docente": "Prof.ssa Neri"},
+        {"ora": "09:15-10:15", "materia": "Matematica", "docente": "Prof. Romano"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "11:30-12:30", "materia": "Italiano", "docente": "Prof.ssa Bianchi"},
+        {"ora": "12:30-13:30", "materia": "Scienze", "docente": "Prof.ssa Verdi"}
+      ],
+      "venerdì": [
+        {"ora": "08:15-09:05", "materia": "Matematica", "docente": "Prof. Romano"},
+        {"ora": "09:05-09:55", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "09:55-10:10", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:10-11:00", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "11:00-11:50", "materia": "Italiano", "docente": "Prof.ssa Bianchi"},
+        {"ora": "11:50-12:40", "materia": "Religione", "docente": "Prof. Donati"}
+      ]
+    },
+    "2B": {
+      "lunedì": [
+        {"ora": "08:15-09:15", "materia": "Italiano", "docente": "Prof.ssa Conti"},
+        {"ora": "09:15-10:15", "materia": "Matematica", "docente": "Prof. De Luca"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "11:30-12:30", "materia": "Inglese", "docente": "Prof.ssa Neri"},
+        {"ora": "12:30-13:30", "materia": "Storia", "docente": "Prof. Esposito"}
+      ],
+      "martedì": [
+        {"ora": "08:15-09:05", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "09:05-09:55", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "09:55-10:10", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:10-11:00", "materia": "Matematica", "docente": "Prof. De Luca"},
+        {"ora": "11:00-11:50", "materia": "Italiano", "docente": "Prof.ssa Conti"},
+        {"ora": "11:50-12:40", "materia": "Scienze", "docente": "Prof. Martini"}
+      ],
+      "mercoledì": [
+        {"ora": "08:15-09:15", "materia": "Matematica", "docente": "Prof. De Luca"},
+        {"ora": "09:15-10:15", "materia": "Italiano", "docente": "Prof.ssa Conti"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "11:30-12:30", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "12:30-13:30", "materia": "Ed. Fisica", "docente": "Prof. Gialli"}
+      ],
+      "giovedì": [
+        {"ora": "08:15-09:15", "materia": "Inglese", "docente": "Prof.ssa Neri"},
+        {"ora": "09:15-10:15", "materia": "Matematica", "docente": "Prof. De Luca"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Italiano", "docente": "Prof.ssa Conti"},
+        {"ora": "11:30-12:30", "materia": "Scienze", "docente": "Prof. Martini"},
+        {"ora": "12:30-13:30", "materia": "Religione", "docente": "Prof. Donati"}
+      ],
+      "venerdì": [
+        {"ora": "08:15-09:05", "materia": "Italiano", "docente": "Prof.ssa Conti"},
+        {"ora": "09:05-09:55", "materia": "Matematica", "docente": "Prof. De Luca"},
+        {"ora": "09:55-10:10", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:10-11:00", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "11:00-11:50", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "11:50-12:40", "materia": "Inglese", "docente": "Prof.ssa Neri"}
+      ]
+    },
+    "3A": {
+      "lunedì": [
+        {"ora": "08:15-09:15", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "09:15-10:15", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Italiano", "docente": "Prof. Esposito"},
+        {"ora": "11:30-12:30", "materia": "Matematica", "docente": "Prof. Romano"},
+        {"ora": "12:30-13:30", "materia": "TPSIT", "docente": "Prof.ssa Rinaldi"}
+      ],
+      "martedì": [
+        {"ora": "08:15-09:05", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "09:05-09:55", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "09:55-10:10", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:10-11:00", "materia": "Matematica", "docente": "Prof. Romano"},
+        {"ora": "11:00-11:50", "materia": "TPSIT", "docente": "Prof.ssa Rinaldi"},
+        {"ora": "11:50-12:40", "materia": "Inglese", "docente": "Prof.ssa Neri"}
+      ],
+      "mercoledì": [
+        {"ora": "08:15-09:15", "materia": "Italiano", "docente": "Prof. Esposito"},
+        {"ora": "09:15-10:15", "materia": "Storia", "docente": "Prof. Esposito"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "11:30-12:30", "materia": "Matematica", "docente": "Prof. Romano"},
+        {"ora": "12:30-13:30", "materia": "Ed. Fisica", "docente": "Prof. Gialli"}
+      ],
+      "giovedì": [
+        {"ora": "08:15-09:15", "materia": "TPSIT", "docente": "Prof.ssa Rinaldi"},
+        {"ora": "09:15-10:15", "materia": "TPSIT", "docente": "Prof.ssa Rinaldi"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "11:30-12:30", "materia": "Italiano", "docente": "Prof. Esposito"},
+        {"ora": "12:30-13:30", "materia": "Religione", "docente": "Prof. Donati"}
+      ],
+      "venerdì": [
+        {"ora": "08:15-09:05", "materia": "Matematica", "docente": "Prof. Romano"},
+        {"ora": "09:05-09:55", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "09:55-10:10", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:10-11:00", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "11:00-11:50", "materia": "Italiano", "docente": "Prof. Esposito"},
+        {"ora": "11:50-12:40", "materia": "Storia", "docente": "Prof. Esposito"}
+      ]
+    },
+    "3B": {
+      "lunedì": [
+        {"ora": "08:15-09:15", "materia": "Matematica", "docente": "Prof. De Luca"},
+        {"ora": "09:15-10:15", "materia": "Italiano", "docente": "Prof. Esposito"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "TPSIT", "docente": "Prof.ssa Rinaldi"},
+        {"ora": "11:30-12:30", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "12:30-13:30", "materia": "Inglese", "docente": "Prof.ssa Neri"}
+      ],
+      "martedì": [
+        {"ora": "08:15-09:05", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "09:05-09:55", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "09:55-10:10", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:10-11:00", "materia": "Matematica", "docente": "Prof. De Luca"},
+        {"ora": "11:00-11:50", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "11:50-12:40", "materia": "Italiano", "docente": "Prof. Esposito"}
+      ],
+      "mercoledì": [
+        {"ora": "08:15-09:15", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "09:15-10:15", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "TPSIT", "docente": "Prof.ssa Rinaldi"},
+        {"ora": "11:30-12:30", "materia": "Matematica", "docente": "Prof. De Luca"},
+        {"ora": "12:30-13:30", "materia": "Storia", "docente": "Prof. Esposito"}
+      ],
+      "giovedì": [
+        {"ora": "08:15-09:15", "materia": "Italiano", "docente": "Prof. Esposito"},
+        {"ora": "09:15-10:15", "materia": "Inglese", "docente": "Prof.ssa Neri"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "11:30-12:30", "materia": "Matematica", "docente": "Prof. De Luca"},
+        {"ora": "12:30-13:30", "materia": "Ed. Fisica", "docente": "Prof. Gialli"}
+      ],
+      "venerdì": [
+        {"ora": "08:15-09:05", "materia": "TPSIT", "docente": "Prof.ssa Rinaldi"},
+        {"ora": "09:05-09:55", "materia": "TPSIT", "docente": "Prof.ssa Rinaldi"},
+        {"ora": "09:55-10:10", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:10-11:00", "materia": "Matematica", "docente": "Prof. De Luca"},
+        {"ora": "11:00-11:50", "materia": "Italiano", "docente": "Prof. Esposito"},
+        {"ora": "11:50-12:40", "materia": "Religione", "docente": "Prof. Donati"}
+      ]
+    },
+    "4A": {
+      "lunedì": [
+        {"ora": "08:15-09:15", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "09:15-10:15", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Matematica", "docente": "Prof. Romano"},
+        {"ora": "11:30-12:30", "materia": "TPSIT", "docente": "Prof.ssa Rinaldi"},
+        {"ora": "12:30-13:30", "materia": "Italiano", "docente": "Prof.ssa Bianchi"}
+      ],
+      "martedì": [
+        {"ora": "08:15-09:05", "materia": "TPSIT", "docente": "Prof.ssa Rinaldi"},
+        {"ora": "09:05-09:55", "materia": "TPSIT", "docente": "Prof.ssa Rinaldi"},
+        {"ora": "09:55-10:10", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:10-11:00", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "11:00-11:50", "materia": "Matematica", "docente": "Prof. Romano"},
+        {"ora": "11:50-12:40", "materia": "Inglese", "docente": "Prof.ssa Neri"}
+      ],
+      "mercoledì": [
+        {"ora": "08:15-09:15", "materia": "Italiano", "docente": "Prof.ssa Bianchi"},
+        {"ora": "09:15-10:15", "materia": "Storia", "docente": "Prof. Esposito"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "11:30-12:30", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "12:30-13:30", "materia": "Ed. Fisica", "docente": "Prof. Gialli"}
+      ],
+      "giovedì": [
+        {"ora": "08:15-09:15", "materia": "Matematica", "docente": "Prof. Romano"},
+        {"ora": "09:15-10:15", "materia": "TPSIT", "docente": "Prof.ssa Rinaldi"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Italiano", "docente": "Prof.ssa Bianchi"},
+        {"ora": "11:30-12:30", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "12:30-13:30", "materia": "Religione", "docente": "Prof. Donati"}
+      ],
+      "venerdì": [
+        {"ora": "08:15-09:05", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "09:05-09:55", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "09:55-10:10", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:10-11:00", "materia": "Matematica", "docente": "Prof. Romano"},
+        {"ora": "11:00-11:50", "materia": "Italiano", "docente": "Prof.ssa Bianchi"},
+        {"ora": "11:50-12:40", "materia": "Storia", "docente": "Prof. Esposito"}
+      ]
+    },
+    "4B": {
+      "lunedì": [
+        {"ora": "08:15-09:15", "materia": "Italiano", "docente": "Prof.ssa Conti"},
+        {"ora": "09:15-10:15", "materia": "Matematica", "docente": "Prof. De Luca"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "11:30-12:30", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "12:30-13:30", "materia": "TPSIT", "docente": "Prof.ssa Rinaldi"}
+      ],
+      "martedì": [
+        {"ora": "08:15-09:05", "materia": "Matematica", "docente": "Prof. De Luca"},
+        {"ora": "09:05-09:55", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "09:55-10:10", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:10-11:00", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "11:00-11:50", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "11:50-12:40", "materia": "Italiano", "docente": "Prof.ssa Conti"}
+      ],
+      "mercoledì": [
+        {"ora": "08:15-09:15", "materia": "TPSIT", "docente": "Prof.ssa Rinaldi"},
+        {"ora": "09:15-10:15", "materia": "TPSIT", "docente": "Prof.ssa Rinaldi"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Italiano", "docente": "Prof.ssa Conti"},
+        {"ora": "11:30-12:30", "materia": "Matematica", "docente": "Prof. De Luca"},
+        {"ora": "12:30-13:30", "materia": "Inglese", "docente": "Prof.ssa Neri"}
+      ],
+      "giovedì": [
+        {"ora": "08:15-09:15", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "09:15-10:15", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Matematica", "docente": "Prof. De Luca"},
+        {"ora": "11:30-12:30", "materia": "Italiano", "docente": "Prof.ssa Conti"},
+        {"ora": "12:30-13:30", "materia": "Ed. Fisica", "docente": "Prof. Gialli"}
+      ],
+      "venerdì": [
+        {"ora": "08:15-09:05", "materia": "TPSIT", "docente": "Prof.ssa Rinaldi"},
+        {"ora": "09:05-09:55", "materia": "Matematica", "docente": "Prof. De Luca"},
+        {"ora": "09:55-10:10", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:10-11:00", "materia": "Italiano", "docente": "Prof.ssa Conti"},
+        {"ora": "11:00-11:50", "materia": "Storia", "docente": "Prof. Esposito"},
+        {"ora": "11:50-12:40", "materia": "Religione", "docente": "Prof. Donati"}
+      ]
+    },
+    "5A": {
+      "lunedì": [
+        {"ora": "08:15-09:15", "materia": "Matematica", "docente": "Prof. Romano"},
+        {"ora": "09:15-10:15", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "TPSIT", "docente": "Prof.ssa Rinaldi"},
+        {"ora": "11:30-12:30", "materia": "Italiano", "docente": "Prof.ssa Bianchi"},
+        {"ora": "12:30-13:30", "materia": "Storia", "docente": "Prof. Esposito"}
+      ],
+      "martedì": [
+        {"ora": "08:15-09:05", "materia": "TPSIT", "docente": "Prof.ssa Rinaldi"},
+        {"ora": "09:05-09:55", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "09:55-10:10", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:10-11:00", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "11:00-11:50", "materia": "Inglese", "docente": "Prof.ssa Neri"},
+        {"ora": "11:50-12:40", "materia": "Matematica", "docente": "Prof. Romano"}
+      ],
+      "mercoledì": [
+        {"ora": "08:15-09:15", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "09:15-10:15", "materia": "Italiano", "docente": "Prof.ssa Bianchi"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Matematica", "docente": "Prof. Romano"},
+        {"ora": "11:30-12:30", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "12:30-13:30", "materia": "Ed. Fisica", "docente": "Prof. Gialli"}
+      ],
+      "giovedì": [
+        {"ora": "08:15-09:15", "materia": "Italiano", "docente": "Prof.ssa Bianchi"},
+        {"ora": "09:15-10:15", "materia": "TPSIT", "docente": "Prof.ssa Rinaldi"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "11:30-12:30", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "12:30-13:30", "materia": "Religione", "docente": "Prof. Donati"}
+      ],
+      "venerdì": [
+        {"ora": "08:15-09:05", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "09:05-09:55", "materia": "Italiano", "docente": "Prof.ssa Bianchi"},
+        {"ora": "09:55-10:10", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:10-11:00", "materia": "Matematica", "docente": "Prof. Romano"},
+        {"ora": "11:00-11:50", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "11:50-12:40", "materia": "TPSIT", "docente": "Prof.ssa Rinaldi"}
+      ]
+    },
+    "5B": {
+      "lunedì": [
+        {"ora": "08:15-09:15", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "09:15-10:15", "materia": "Italiano", "docente": "Prof.ssa Conti"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Matematica", "docente": "Prof. De Luca"},
+        {"ora": "11:30-12:30", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "12:30-13:30", "materia": "TPSIT", "docente": "Prof.ssa Rinaldi"}
+      ],
+      "martedì": [
+        {"ora": "08:15-09:05", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "09:05-09:55", "materia": "Matematica", "docente": "Prof. De Luca"},
+        {"ora": "09:55-10:10", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:10-11:00", "materia": "TPSIT", "docente": "Prof.ssa Rinaldi"},
+        {"ora": "11:00-11:50", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "11:50-12:40", "materia": "Italiano", "docente": "Prof.ssa Conti"}
+      ],
+      "mercoledì": [
+        {"ora": "08:15-09:15", "materia": "Italiano", "docente": "Prof.ssa Conti"},
+        {"ora": "09:15-10:15", "materia": "TPSIT", "docente": "Prof.ssa Rinaldi"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "11:30-12:30", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "12:30-13:30", "materia": "Inglese", "docente": "Prof.ssa Neri"}
+      ],
+      "giovedì": [
+        {"ora": "08:15-09:15", "materia": "Matematica", "docente": "Prof. De Luca"},
+        {"ora": "09:15-10:15", "materia": "Sistemi e Reti", "docente": "Prof. Ferrari"},
+        {"ora": "10:15-10:30", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:30-11:30", "materia": "Italiano", "docente": "Prof.ssa Conti"},
+        {"ora": "11:30-12:30", "materia": "Storia", "docente": "Prof. Esposito"},
+        {"ora": "12:30-13:30", "materia": "Ed. Fisica", "docente": "Prof. Gialli"}
+      ],
+      "venerdì": [
+        {"ora": "08:15-09:05", "materia": "Italiano", "docente": "Prof.ssa Conti"},
+        {"ora": "09:05-09:55", "materia": "Telecomunicazioni", "docente": "Prof. Caruso"},
+        {"ora": "09:55-10:10", "materia": "Intervallo", "docente": "---"},
+        {"ora": "10:10-11:00", "materia": "Matematica", "docente": "Prof. De Luca"},
+        {"ora": "11:00-11:50", "materia": "TPSIT", "docente": "Prof.ssa Rinaldi"},
+        {"ora": "11:50-12:40", "materia": "Religione", "docente": "Prof. Donati"}
       ]
     }
   },
