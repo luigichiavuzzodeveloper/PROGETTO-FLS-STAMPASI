@@ -160,7 +160,7 @@ const ChatManager = {
         // Aggiorna ultimo accesso e resetta non letti
         this.chats[id].ultimoAccesso = new Date().toISOString();
         this.chats[id].nonLetti = 0;
-        
+        AppState.conversazione = []; 
         // Carica i messaggi di questa chat
         this.caricaMessaggiChat(id);
         
@@ -309,23 +309,6 @@ const ChatManager = {
             });
         }
     }
-};
-
-// ============================================================================
-// FUNZIONI MODIFICATE PER SUPPORTARE CHAT MULTIPLE
-// ============================================================================
-
-// Sovrascrivi le funzioni originali
-const aggiungiMessaggioUtenteOriginale = aggiungiMessaggioUtente;
-aggiungiMessaggioUtente = function(testo) {
-    aggiungiMessaggioUtenteOriginale(testo);
-    ChatManager.aggiungiMessaggio('utente', testo);
-};
-
-const aggiungiMessaggioBotOriginale = aggiungiMessaggioBot;
-aggiungiMessaggioBot = function(testo) {
-    aggiungiMessaggioBotOriginale(testo);
-    ChatManager.aggiungiMessaggio('bot', testo);
 };
 
 // Funzioni helper per il caricamento (già definite ma le richiamo per sicurezza)
@@ -486,6 +469,7 @@ function aggiungiMessaggioUtente(testo) {
     DOM.chatMessages.insertAdjacentHTML('beforeend', messaggioHTML);
     scrollaInFondo();
     AppState.conversazione.push({ tipo: 'utente', testo, ora });
+    ChatManager.aggiungiMessaggio('utente', testo); 
 }
 
 function aggiungiMessaggioBot(testo) {
@@ -513,6 +497,7 @@ function aggiungiMessaggioBot(testo) {
     DOM.chatMessages.insertAdjacentHTML('beforeend', messaggioHTML);
     scrollaInFondo();
     AppState.conversazione.push({ tipo: 'bot', testo, ora });
+    ChatManager.aggiungiMessaggio('bot', testo);
 }
 
 function aggiungiCardHTML(html) {
