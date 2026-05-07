@@ -8,7 +8,7 @@
 
 **Versione:** 1.0.0  
 **Data:** Maggio 2026  
-**Sviluppatore:** [Il tuo nome]  
+**Sviluppatore:** : Gruppo Broly  
 **Istituto:** I.T.E.T. Blaise Pascal  
 
 ---
